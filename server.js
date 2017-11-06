@@ -1,142 +1,181 @@
-// server.js
-// (reference) https://github.com/cfsghost/passport-github/blob/master/examples/login/app.js
+// server.js, home of all things good!
 
 // init project
 var express = require('express');
-var passport = require('passport');
-var GitHubStrategy = require('passport-github2').Strategy;
-var util = require('util');
-var session = require('express-session');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override');
-var GitHubStrategy = require('passport-github2').Strategy;
-var partials = require('express-partials');
 var app = express();
+var multer  = require('multer')
+var upload = multer({ inMemory: true })
 
+var imageSearch = require('node-google-image-search');
+
+//lets require/import the mongodb native drivers.
 var mongodb = require('mongodb').MongoClient;
-var url = 'mongodb://guest:'+process.env.MONGO_PASS+'@ds056979.mlab.com:56979/king-fcc';  // Connection URL.
+var url = 'mongodb://guest:'+process.env.SECRET+'@ds056979.mlab.com:56979/king-fcc';  // Connection URL.
 
-// configure Express
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
-app.use(partials());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(methodOverride());
-app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
-// Initialize Passport!  Also use passport.session() middleware, to support
-// persistent login sessions (recommended).
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(express.static(__dirname + '/public'));
 
-// Passport session setup.
-//   To support persistent login sessions, Passport needs to be able to
-//   serialize users into and deserialize users out of the session.  Typically,
-//   this will be as simple as storing the user ID when serializing, and finding
-//   the user by ID when deserializing.  However, since this example does not
-//   have a database of user records, the complete GitHub profile is serialized
-//   and deserialized.
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
 
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
+function makeSlug(min, max) {
+  var t = "";
+  for(var i = 0; i < min + Math.floor(Math.random() * (max - min)); i++) {
+    var base = 65 + (Math.random() * 25);
+    if(Math.random() < 0.4) {
+      base += 32;
+    } else if (Math.random() < 0.3) {
+      base = 48 + Math.random() * 9;
+    } t += String.fromCharCode(base);
+  } 
+  return t;
+}
 
-passport.use(new GitHubStrategy({
-    clientID: process.env.GITHUB_KEY,
-    clientSecret: process.env.GITHUB_SECRET,
-    callbackURL: process.env.APP_URL + '/auth/github/callback'
-  },
-  function(accessToken, refreshToken, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
+String.prototype.regexIndexOf = function(regex, startpos) {
+    var indexOf = this.substring(startpos || 0).search(regex);
+    return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
+}
+
+
+
+// Use connect method to connect to the Server
+mongodb.connect(url, function (err, db) {
+  if (err) {
+    console.log('Unable to connect to the mongoDB server. Error:', err);
+  } else {
+    console.log('Connection established to', url.replace(process.env.SECRET, "SECRETPASSWORD"));
+    var shrturls = db.collection('shrturls');
+    var recentSearches = db.collection('recentsearches');
+    
+    app.get("/shrturl", function(req, res) {
+      var longurl = req.query.shrtn;
+      var urlobj = {"longurl": longurl, "shrturl": ""};
+      var mUrls = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+
+      if(longurl && mUrls.test(longurl)) {
+        longurl = longurl.slice(longurl.regexIndexOf(mUrls));
+        urlobj.longurl = longurl;
+        var shrturl = makeSlug(4, 8);
+        urlobj["shrturl"] = shrturl;
+        
+        // validate long urls (TODO)
+        
+        shrturls.insert(urlobj, function(err, data) {
+          if (err) throw err;
+        });
+        res.end(JSON.stringify(urlobj));
+      }  else if (!longurl) {
+        res.sendFile(__dirname + '/views/tstamp/index.html');
+      } else {
+        res.end('{"err":"Invalid URL!"}');
+      }
+        // search for their url and redirect them (TODO)
+    });
+    app.get("/shrturl/:shrturl", function(req, res) {
+      shrturls.find({
+        shrturl: req.params.shrturl
+      }).toArray(function(err, longurls) {
+        if(err) throw err;
+        res.redirect(longurls[0].longurl);
+        res.end(longurls[0].longurl);
+      });
+    });
+    
+    app.get("/imgsearch/:img", function(req, res) {
+      var offset = 0;
+      var amt = 8;
+      var page = 0;
+      if(req.query.offset) offset = req.query.offset;
+      if(req.query.amt && req.query.amt < 20) amt = req.query.amt;
+      if(req.query.page) page = req.query.page;
+      var searchterm = req.params.img;
       
-      // To keep the example simple, the user's GitHub profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the GitHub account with a user record in your database,
-      // and return that user instead.
-      return done(null, profile);
+      imageSearch(searchterm, function(results) {
+        var currentdate = new Date(); 
+        var datetime = currentdate.getDate() + "/"
+                     + (currentdate.getMonth()+1)  + "/" 
+                     + currentdate.getFullYear() + " @ "  
+                     + currentdate.getHours() + ":"  
+                     + currentdate.getMinutes() + ":" 
+                     + currentdate.getSeconds();
+        recentSearches.insert({searchterm: searchterm, time: datetime}, function(err, data) {
+          if(err) throw err;
+          var nresults = [];
+          for(var result of results) {
+            if(result.image) {
+              var nresult = {
+                              "title": result.title, 
+                              "url": result.link, 
+                              "snippit": result.snippit,
+                              "context": result.image.contextLink,
+                              "thumbnail": result.image.thumbnailLink
+                            };
+              nresults.push(nresult);
+            }
+          }
+          res.end(JSON.stringify(nresults));
+        });
+      }, page, amt);
+    });
+    app.get("/recentimgsearches/", function(req, res) {
+      var amt = 10;
+      if(req.query.amt) amt = req.query.amt;
+      recentSearches.find({}).toArray(function(err, data) {
+        if(err) throw err;
+        res.end(JSON.stringify(data));
+      }); 
     });
   }
-));
-
+});
 
 // http://expressjs.com/en/starter/static-files.html
-app.use(express.static('public'));
+app.use("/", express.static('public'));
+
+app.get("/", function(req, res) {
+  res.sendFile(__dirname + '/views/home.html');
+});
+
+app.get("/filelength/", function(req, res) {
+  res.sendFile(__dirname + '/views/filelength/index.html');
+});
+
+app.post('/gfilelength/', upload.single('file'), function (req, res) {
+  // req.file is the test file 
+  // text fields are in req.body, if there were any lmao
+  res.end(JSON.stringify(req.file));
+});
+
+app.get("/timestamp/", function(req, res) {
+  res.sendFile(__dirname + '/views/tstamp/index.html');
+});
 
 // http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (req, res) {
-  res.render('index', { user: req.user });
-});
-
-app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account', { user: req.user });
-});
-
-// GET /auth/github
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in GitHub authentication will involve redirecting
-//   the user to github.com.  After authorization, GitHub will redirect the user
-//   back to this application at /auth/github/callback
-app.get('/auth/github',
-  passport.authenticate('github', { scope: [ 'user:email' ] }),
-  function(req, res){
-    // The request will be redirected to GitHub for authentication, so this
-    // function will not be called.
+app.get("/timestamp/:a", function (req, res) {
+  var teststr = req.params.a;
+  var ret = {"unix": null, "real": null};
+  var testint = parseInt(teststr);
+  
+  if(!isNaN(testint)) teststr = testint;
+  var testd = new Date(teststr);
+  if(testd.getTime() > 0) {
+    ret.unix = testd.getTime();
+    ret.real = testd.toDateString();
   }
-);
-
-// GET /auth/github/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function will be called,
-//   which, in this example, will redirect the user to the home page.
-app.get('/auth/github/callback', 
-  passport.authenticate('github', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
-  });
-
-app.get('/login', function(req, res){
-  res.render('login', { user: req.user });
+  
+  res.end(JSON.stringify(ret));
 });
 
-app.get('/logout', function(req, res){
-  req.logout();
-  res.redirect('/');
+app.get("/hparser/", function(req, res) {
+  var ret = {"system": "", "browser": ""};
+  var tarr = req.headers["user-agent"].split(/[\(\)]/);
+  
+  ret["browser"] = tarr[4].split('').splice(1, tarr[4].length).join('').split(' ').join('; ');
+  ret["system"] = tarr[1];
+  ret["user-agent"] = req.headers["user-agent"];
+  ret["language"] = req.headers["accept-language"].split(";")[0];
+  ret["ip"] = req.headers["x-forwarded-for"].split(",")[0];
+  ret["protocol"] = req.headers["x-forwarded-proto"].split(",")[0];
+  
+  res.end(JSON.stringify(ret, null, 2));
 });
-
-app.get("/dreams", function (request, response) {
-  response.send(dreams);
-});
-
-// could also use the POST body instead of query string: http://expressjs.com/en/api.html#req.body
-app.post("/dreams", function (request, response) {
-  dreams.push(request.query.dream);
-  response.sendStatus(200);
-});
-
-// Simple in-memory store for now
-var dreams = [
-  "Find and count some sheep",
-  "Climb a really tall mountain",
-  "Wash the dishes"
-];
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
-
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed.  Otherwise, the user will be redirected to the
-//   login page.
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login')
-}
