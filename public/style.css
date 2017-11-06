@@ -1,23 +1,42 @@
-.cont1 {
-  width: 80vw;
-  margin: 5vw;
-  padding: 5vw;
-  background-color: #99E2FF;
-  text-align: center;
-  color: black;
+/* styles */
+/* called by your view template */
+
+/* You might want to try something fancier: */
+/* less: http://lesscss.org/ */
+
+* {
+  box-sizing: border-box;
 }
-.ul1 {
-  text-align: left;
-}
-.prms {
-  text-align: right;
-}
+
 body {
-  background-color: #EAFFF0;
+  font-family: helvetica, arial, sans-serif;
+  background: #fefefe;
 }
-ul {
-  padding: 25px;
+
+.navbar {
+  background: #f6f6f6;
+  margin-bottom: 3.5vh;
 }
-.api {
-  padding: 10px;
+.mincon {
+  padding: 8%;
+  background: #efeff8;
+  text-align: center;
+}
+.mcon {
+  padding: 8%;
+  background: #efeff8;
+}
+.loginWith {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.formBox {
+  border: 2px solid #ddd;
+  margin: 15px;
+  padding: 15px;
+}
+.loginWithGithub {
+  margin-top: 10px;
+  margin-bottom: 75px;
 }
