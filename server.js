@@ -15,6 +15,7 @@ var GitHubStrategy = require('passport-github2').Strategy;
 var partials = require('express-partials');
 var app = express();
 var passwordHash = require('password-hash');
+var flash=require("connect-flash");
 
 var mongodb = require('mongodb').MongoClient;
 var url = 'mongodb://guest:'+process.env.MONGO_PASS+'@ds056979.mlab.com:56979/king-fcc';  // Connection URL.
@@ -22,6 +23,7 @@ var url = 'mongodb://guest:'+process.env.MONGO_PASS+'@ds056979.mlab.com:56979/ki
 // configure Express
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
+app.use(flash());
 app.use(partials());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -80,7 +82,7 @@ mongodb.connect(url, function (err, db) {
       done(null, obj);
     });
 
-    passport.use(new LocalStrategy(function(username, password, done) {
+    passport.use(new LocalStrategy({passReqToCallback : true}, function(username, password, done) {
       usersDB.findOne({ name: displayNameToUsername(username) }, function(err, user) {
         if (err) { return done(err); }
         if (!user) {
@@ -96,20 +98,21 @@ mongodb.connect(url, function (err, db) {
     passport.use(new GitHubStrategy({
         clientID: process.env.GITHUB_KEY,
         clientSecret: process.env.GITHUB_SECRET,
-        callbackURL: process.env.APP_URL + '/auth/github/callback'
+        callbackURL: process.env.APP_URL + '/auth/github/callback',
+        passReqToCallback : true
       }, loginSignup));
 
     // http://expressjs.com/en/starter/basic-routing.html
     app.get("/", function (req, res) {
-      res.render('index', { user: req.user });
+      res.render('index', { user: req.user, error: req.query.err });
     });
     
     app.get('/paccount', ensureAuthenticated, function(req, res) {
-      res.render('account', { user: req.user, public: true });
+      res.render('account', { user: req.user, public: true, error: req.query.err });
     });
     
     app.get('/account', ensureAuthenticated, function(req, res) {
-      res.render('account', { user: req.user, public: false });
+      res.render('account', { user: req.user, public: false, error: req.query.err });
     });
 
     // GET /auth/github
@@ -140,7 +143,7 @@ mongodb.connect(url, function (err, db) {
 
     app.get('/login', function(req, res) {
       var signup = (req.query.signup ? true:false);
-      res.render('login', { user: req.user, signup: signup });
+      res.render('login', { user: req.user, signup: signup, error: req.query.err  });
     });
 
     app.get('/logout', function(req, res) {
@@ -149,7 +152,7 @@ mongodb.connect(url, function (err, db) {
     });
     
     app.post('/auth/login', 
-      passport.authenticate('local', { failureRedirect: '/account' }),
+      passport.authenticate('local', { failureRedirect: '/account?err=Unable%20to%20login!'}),
       function(req, res, next) {
         console.log('/auth/login visited!');
         res.redirect('/'); 
@@ -178,8 +181,7 @@ mongodb.connect(url, function (err, db) {
             console.log(toIns)
           }
           else {
-            console.log("shock!");
-            res.redirect("/login")
+            res.redirect("/login?err=User%20already%20exists!")
           }
           console.log("smiles!")
           res.redirect("/login");
@@ -207,12 +209,15 @@ var listener = app.listen(process.env.PORT, function () {
 //   login page.
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login')
+  res.redirect('/login?err=Unable%20to%20authenticate%20user.')
 }
 
 function displayNameToUsername(displayName) {
-  return displayName.split(' ').join('-');
-}
+  if(displayName) {
+    return displayName.split(' ').join('-');
+  }
+  else
+    return null;}
 
 function hashOf(input) {
   return passwordHash.generate(input);
