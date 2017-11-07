@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "express": "^4.16.2",
-    "express-session": "^1.11.3",
-    "passport": "^0.3.0",
+    "express-session": "^1.15.6",
+    "passport": "^0.4.0",
     "passport-github2": "^0.1.11",
     "util": "^0.10.3",
     "body-parser": "^1.18.2",
@@ -21,7 +21,8 @@
     "ejs": "^2.5.7",
     "mongodb": "^2.2.33",
     "passport-local": "^1.0.0",
-    "password-hash": "^1.2.2"
+    "password-hash": "^1.2.2",
+    "connect-flash": "^0.1.1"
   },
   "engines": {
     "node": "8.x"
