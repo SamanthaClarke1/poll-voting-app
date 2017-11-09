@@ -1,4 +1,115 @@
-<p> Name: <i><%= user.displayName %></i> or <i><%= user.name %></i></p>
-<p> Profile: <a href="<%= user.profileUrl %>"> here </a></p>
-<img src="<%= user.img %>"></img>
-<p>Secret: <button id="secretBtn">Show Me</button> <p id="userSecret" style="display: none;"><%= user.secret %></p></p>
+<div class="mcon container">
+  <!--p> Name: <i><%= user.displayName %></i> or <i><%= user.name %></i></p>
+  <p> Profile: <a href="<%= user.profileUrl %>"> here </a></p>
+  <img src="<%= user.img %>"></img>
+  <img src="<%= user.icon64 %>"></img>
+  <% if(!public) { %>
+  <p>Secret: <button id="secretBtn">Show Me</button> <p id="userSecret" style="display: none;"><%= user.secret %></p></p>
+  <form action="/submitavatar" method="post">
+    <input type="text" name="img" placeholder="https://www.exampleurl.com"/>
+    <input type="submit" />
+  </form>
+  <% } %>-->
+  <% if(editing) { %> <form class="acc-formBox rounded" action="/auth/updateacc" method="post"> <% } %> 
+  <div class="col-12 row" style="margin: 0;">
+      <div class="col-lg-4 col-12 acc-mbar acc-user-section text-center">
+        <img class="acc-prof-pic img-responsive col-10" src="<%= user.img %>" alt="profile picture"/>
+        <% if(editing) { %> <label for="in-avatar"> Avatar </label>
+        <input type="url" class="form-control" name="avatar" id="in-avatar" value="<%=user.img%>" /><% } %>
+        <% if(!editing) { %> <h2><%= user.displayName %></h3>
+        <% } else { %> <label for="in-username"> Display Name </label> 
+        <input type="username" class="form-control" name="displayName" id="in-username" value="<%= user.displayName %>" /> <% } %>
+        <hr />
+        <% if(!editing) { %>
+          <p><% if(user.bio && user.bio != "") { %> <%= user.bio %> <% } else { %> I hate bio's so much, I won't even set one! <% } %></p>
+        <% } else { %>
+          <label for="in-bio"> Biography </label>
+          <input type="username" class="form-control" name="bio" id="in-bio" 
+                 value="<% if(user.bio && user.bio != "") { %> <%= user.bio %> <% } else { %> I hate bio's so much, I won't even set one! <% } %>" />
+        <% } %>
+        <% if(!editing && user.github) { %> 
+          <a href="<%= user.githubLink %>">
+            <button class="loginWith col-12 btn btn-default">
+              <img src="https://developers.google.com/site-assets/logo-github.svg" alt="github" style="width: 32px; height: 32px;"/>
+            </button>
+          </a>
+        <% } %>
+        <% if(!public && !editing) { %>
+            <div class="col-12 row nomarg">
+              <p class="col-6">
+                 Secret: 
+              </p>
+              <button id="secretBtn" class="btn btn-info col-6">Show Me</button> 
+            </div>
+            <div class="col-12">
+              <input id="userSecret" style="display: none;" class="col-12 text-muted" value="<%= user.secret %>" readonly></input>
+            </div>
+            <div class="col-12 row nomarg">
+              <div class="container col-12">
+                <% if(!editing) { %>
+                  <a href="/account?editing=true">
+                    <button class="btn btn-success acc-edit-btn">
+                      <i class="fa fa-pencil" aria-hidden="true"></i> Edit
+                    </button>
+                  </a>
+                <% } else { %>
+                  <a href="/account?editing=true">
+                    <button class="btn btn-success acc-edit-btn">
+                      <i class="fa fa-pencil" aria-hidden="true"></i> Edit
+                    </button>
+                  </a>
+                  <input type="submit" value="Update!" class="acc-edit-btn btn btn-success" />
+                <% } %>
+              </div>
+            </div>
+        <% } %>
+      </div> 
+  
+  
+  
+  
+  
+      <div class="col-lg-8 col-12 acc-mbar acc-polls-section rows">
+        <div class="polls-text row col-12 poll-title">
+          <h3 class="col-lg-10 col-12 my-polls-title-text">My Polls</h3>
+          <a href="/createpoll" class="col-lg-2 col-12 create-btn" style="height: 50%;">
+            <button class="col-12 btn btn-success loginWith polls-text-b btn-correct-row">
+              Create <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
+          </a>
+        </div>
+        <%  if(polls.length < 1) { %> <hr><small class="text-muted col-12">There's nothing here...</small>
+          <%  } else {  %>
+            <hr>
+            <ul class="allpolls col-12"> 
+              <%
+                for(poll of polls) {
+                  %> 
+                  <li class="row col-12 poll-title" style="margin-bottom: 5px;">
+                    <!--Delete Button-->
+                    <% if(!editing && !public) { %> <form class="col-12 del-form" action="/deletepoll" method="post"> <% } %>
+                      <input name="poll" value="<%= poll.slug %>" hidden>
+                      <div class="input-group">
+                        <!--Poll Title-->
+                        <a href="<%= poll.url %>" class="poll-title-container removelinkdefault" style="width: 100%">
+                          <h6><%= poll.question %></h6>
+                        </a>
+                        <% if (!public) { %>
+                          <button type="submit" class="input-group-addon btn btn-danger">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                          </button>
+                        <% } %>
+                      </div>
+                    <% if(!editing && !public) { %> </form> <% } %>
+                  </li>
+                  <%
+                }
+              }
+          %>
+        </ul>
+      </div>
+
+  </div>
+  <% if(editing) { %> </form> <% } %>
+  
+</div>

@@ -1,0 +1,32 @@
+<div class="mincon container">
+  <form action="/addpoll" method="post">
+    <div class="form-group">
+      
+      <label class="control-label" for="question" >
+        Question:
+      </label>
+      <div class="input-group" id="questionHolder">
+        <input class="form-control" id="questionBox" name="question" type="text" required />
+      </div>
+
+      <hr style="margin-top: 50px;"/>
+
+      <label class="control-label" for="response">
+        Options:
+      </label>
+      <div class="input-group"> <!-- add answer to array of answers-->
+        <div class="input-group-addon btext" id="addres">
+          <div>
+            <b>+</b>
+          </div>
+        </div>
+        <input class="form-control" id="response" type="text" />
+      </div>
+      <ol id="arrofvals" class="responses">
+        <!-- this will be populated with code, see general.js -->
+      </ol>
+      
+      <input type="submit" id="subm" class="form-control btn btn-success" disabled value="Submit!" />
+    </div>
+  </form>
+</div>

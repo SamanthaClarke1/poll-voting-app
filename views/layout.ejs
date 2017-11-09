@@ -8,36 +8,55 @@
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/52160498ec.js"></script>
     <link rel="stylesheet" href="/style.css">
-    <script src="/secretHider.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <script src="/general.js"></script>
 	</head>
 	<body>
     <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
+      <% if(user) { %>
+        <div class="img-responsive navbar-toggler-right avholder">
+          <a href="/account">
+            <img src="<%= user.icon64 %>" style="border-radius: 10%;" alt="Profile Pic" />
+          </a>
+        </div>
+      <% } %>
+      
+      <!-- Navbar toggle button -->
       <button class="navbar-toggler navbar-toggler-right" type="button" 
               data-toggle="collapse" data-target="#navbarSupportedContent" 
               aria-controls="navbarSupportedContent" aria-expanded="false" 
               aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="/">Polls</a>
+      
+      <!-- Navbar logo -->
+      <a class="navbar-brand" href="/">
+        <img class="img img-responsive" 
+             src="https://lh3.googleusercontent.com/7ITYJK1YP86NRQqnWEATFWdvcGZ6qmPauJqIEEN7Cw48DZk9ghmEz_bJR2ccRw8aWQA=w300" 
+             style="width: 38px; height: 38px;"/>
+      </a>
+      
+      <!-- Some other navbar shit -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="/">Home<span class="sr-only">(current)</span></a>
+          <li class="nav-item" id="home-navi">
+            <a class="nav-link" href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
           </li>
           <% if(!user) { %>
             <li class="nav-item">
-              <a class="nav-link" href="/login">Login</a>
+                <a href="/login" id="login-navi" class="nav-link nav-item"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/login?signup=true">Signup</a>
+            <li class="nav-item" id="signup-navi">
+              <a class="nav-link" href="/login?signup=true"><i class="fa fa-user-plus" aria-hidden="true"></i> Signup</a>
             </li>
           <% } else { %>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Logout</a>
+            <li class="nav-item" id="account-navi">
+              <a class="nav-link" href="/account"><i class="fa fa-user" aria-hidden="true"></i> Account</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/account">Account</a>
+            <li class="nav-item" id="logout-navi">
+              <a class="nav-link" id="logout" href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
             </li>
           <% } %>
         </ul>

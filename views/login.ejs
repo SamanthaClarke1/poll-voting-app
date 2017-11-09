@@ -1,27 +1,59 @@
 <div class="mincon container">
-  <% if(signup) { %> <h3> Manual Signup </h3>
-  <% } else { %>     <h3> Manual Login  </h3> <% } %>
-  <form class="formBox rounded" action="<% if(signup) { %>/auth/signin<% } else { %>/auth/login<% } %>" method="post">
-    <small class="text-muted">( Alpha-Numeric [a-z, 0-9] Only )</small>
-    <div class="form-group">
-      <label for="username"> User Name </label>
-      <input type="username" class="form-control" name="username" placeholder="Username">
+  <div class="col-12 row">
+    <form class="formBox rounded col-12 col-lg-8 manual-logins" action="<% if(signup) { %>/auth/signin<% } else { %>/auth/login<% } %>" method="post">
+      <div class="login-header">
+        <% if(signup) { %> <h2> Manual Signup </h2>
+        <% } else { %>     <h2> Manual Login  </h2> <% } %>
+        <small class="text-muted">( Alpha-Numeric [a-z, 0-9] Only )</small> 
+      </div>
+      <div class="form-group">
+        <label for="in-username"> User Name </label>
+        <input type="username" class="form-control" name="username" id="in-username" placeholder="Username" required>
+      </div>
+      <hr />
+      <div class="form-group">
+        <label for="in-password"> Password </label>
+        <input type="password" class="form-control" name="password" id="in-password" placeholder="Password" required>
+      </div>
+      <% if(signup) { %>
+      <div class="form-group">
+        <label for="in-confirmpassword" class="col-form-label"> Confirm Password </label>
+        <input type="password" class="form-control" name="confirmpassword" id="in-confirmpassword" placeholder="Confirm Password" required>
+      </div>
+      <% } %>
+      <hr />
+      <input type="submit" value="<% if(signup) { %>Sign me up!<% } else { %>Log In<% } %>" class="loginWith btn btn-primary grow"/>
+      <div>
+        <small class="text-muted">Or, alternatively...</small>
+      </div>
+      <% if(!signup) {%> <a href="/login?signup=true" class="loginWith text-center"><h5>Signup</h5></a> 
+      <% } else { %> <a href="/login" class="loginWith text-center"><h5>Login</h5></a> <% } %>
+    </form>
+
+    <div class="special-logins col-12 col-lg-4 formBox">
+      <small class="text-muted">Or log in with something fancy....</small>
+      <div class="col-12">
+        <a href="/auth/github">
+          <button class="btn btn-default loginWith loginWithGithub grow">
+            <img src="https://developers.google.com/site-assets/logo-github.svg"
+                 alt="github" style="width: 32px; height: 32px;" class="login-icon" />
+            <p class="login-special-text">
+              Login with Github
+            </p>
+          </button>
+        </a>
+      </div>
+      <div class="col-12">
+        <a href="/auth/facebook">
+          <button class="btn btn-primary loginWith loginWithFacebook grow">
+            <img src="http://www.optomsoc.com/wp-content/plugins/social-media-feather/synved-social/image/social/regular/128x128/facebook.png"
+                 alt="github" style="width: 32px; height: 32px;" class="login-icon" />
+            <p class="login-special-text">
+              Login with Facebook
+            </p>
+          </button>
+        </a>
+      </div>
     </div>
-    <hr />
-    <div class="form-group">
-      <label for="password"> Password </label>
-      <input type="password" class="form-control" name="password" placeholder="Password">
-    </div>
-    <% if(signup) { %>
-    <div class="form-group">
-      <label for="confirmpassword"> Confirm Password </label>
-      <input type="password" class="form-control" name="confirmpassword" placeholder="Confirm Password">
-    </div>
-    <% } %>
-    <input type="submit" value="<% if(signup) { %>Sign me up!<% } else { %>Log In<% } %>" class="loginWith btn btn-primary" />
-  </form>
-  <a href="/auth/github"><button class="loginWith btn btn-success loginWithGithub">Login with GitHub</button></a>
-  <small class="text-muted">Or, alternatively...</small>
-  <% if(!signup) {%> <a href="/login?signup=true" class="loginWith text-center"><h5>Signup</h5></a> 
-  <% } else { %> <a href="/login" class="loginWith text-center"><h5>Login</h5></a> <% } %>
+  </div>
 </div>

@@ -22,7 +22,9 @@
     "mongodb": "^2.2.33",
     "passport-local": "^1.0.0",
     "password-hash": "^1.2.2",
-    "connect-flash": "^0.1.1"
+    "connect-flash": "^0.1.1",
+    "jimp": "^0.2.28",
+    "passport-facebook": "^2.1.1"
   },
   "engines": {
     "node": "8.x"
