@@ -1,5 +1,5 @@
 /* styles */
-/* called by your view template */
+/* calle  background: #f9f9f9d by your view template */
 
 /* You might want to try something fancier: */
 /* less: http://lesscss.org/ */
@@ -9,65 +9,325 @@
 }
 
 body {
-  font-family: helvetica, arial, sans-serif;
-  background: #fefefe;
+  font-family: 'Lato', helvetica, arial, sans-serif;
+  background: #f9f9f9;
 }
 
-.navbar {
-  background: #f6f6f6;
-}
 .mincon {
-  padding: 8%;
-  background: #efeff8;
+  padding: 5%;
+  background: #f9f9f9;
   text-align: center;
 }
 .mcon {
-  padding: 8%;
-  background: #efeff8;
+  background: #f9f9f9;
+  padding: 0%;
 }
-.loginWith {
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px;
+.bordercon {
+  border-right: 1px solid #dcd9d9;
+  border-left: 1px solid #dcd9d9;
+  border-bottom: 1px solid #dcd9d9;
 }
-.formBox {
-  border: 2px solid #ddd;
-  margin: 15px;
-  padding: 15px;
+.segment{
+  padding: 10% 25% 10% 25%;
 }
-.loginWithGithub {
-  margin-top: 10px;
-  margin-bottom: 75px;
+.miniseg{
+  font-size:32px;
 }
+.minihidden{
+  display: none;
+  
+}
+.btext{
+  background-color: #e6e6e6;
+  color:green;
+}
+
+.avholder {
+  padding: 0px;
+  margin: 0px;
+  margin-right: 64px !important;
+}
+
 .errholder {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
-  font-size: 40px;
+  font-size: 2.6rem;
   background: #ff4c7c;
   animation: errholder-hider 4s;
   height: 0vh;
   padding-bottom: 0px;
   margin-bottom: 0px;
+  opacity: 0;
+  overflow: hidden;
+}
+.err {
 }
 @keyframes errholder-hider {
   0% {
-    height: 8vh;
+    height: 12vh;
     padding-bottom: 16px;
     margin-bottom: 16px;
     background: #ff4c7c;
+    opacity: 1;
   }
   40% {
     background: #ff8fbf;
+    opacity: 0.9;
   }
   60% {
-    height: 8vh;
+    height: 12vh;
     padding-bottom: 16px;
     margin-bottom: 16px;
+    opacity: 0.9;
   }
   100% {
     height: 0vh;
-    background: #fff;
-    padding-bottom: 0px;
+    background: #f9f9f9;
     margin-bottom: 0px;
+    padding-bottom: 0px;
+    opacity: 0;
   }
+}
+
+
+
+/* ======= 
+   ACCOUNT
+   ======= */
+
+.loginWith {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.btn {
+  cursor: pointer;
+}
+.formBox {
+  border: 2px solid #e3e3e3;
+  padding: 15px;
+}
+.loginWithGithub {
+  margin-top: 20px;
+}
+.loginWithFacebook {
+  margin-top: 10px;
+  background: #3a5897;
+  color: white;
+}
+.login-icon {
+  float: left;
+}
+.login-special-text {
+  float: right;
+}
+.login-header {
+  padding: 2%;
+}
+.special-logins {
+  margin-left: 10px;
+}
+.manual-logins {
+  margin-left: -10px;
+}
+.acc-cont {
+  background: #ececec;
+}
+.acc-mbar {
+  height: 100%;
+}
+.acc-user-section {
+  background: #f9f9f9;
+}
+.acc-polls-section {
+  background: #f9f9f9;
+}
+
+
+
+/* =============
+   POLL CREATION
+   ============= */
+
+.disabled-adder {
+  background: #c0c0c0;
+}
+#addres {
+  transition: all .15s ease-in-out;
+  cursor: pointer;
+}
+#addres:hover {
+  background: #ececec;
+}
+
+.polls-text {
+  padding: 0;
+  margin-top: 10%;
+  height: 5vh;
+}
+.polls-text-b {
+  padding: 0;
+  margin-top: 10%;
+  height: 5vh;
+}
+.acc-prof-pic {
+  border-radius: 5%;
+  width: 80%;
+  height: 80%;
+  padding: 0;
+  margin-top: 20%;
+  margin-right: 10%;
+  margin-bottom: 10%;
+  margin-left: 10%;
+}
+.acc-edit-btn {
+  width: 100%;
+  margin-top: 7%;
+  margin-bottom: 10px;
+}
+
+
+.poll-button {
+  width: 100%;
+}
+.navbar {
+  min-height: 78px !important;
+}
+.acc-formBox {
+}
+label {
+  margin-top: 10px;
+}
+
+.grow { transition: all .2s ease-in-out; }
+.grow:hover { transform: scale(1.07); }
+
+.btn-correct-row {
+  margin-top: 0px;
+}
+.allpolls{
+  padding: 0;
+  margin: 0;
+}
+.poll-title {
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+  margin-left: 0;
+}
+.my-polls-title-text {
+  padding: 0;
+  margin: 0;
+}
+.create-btn {
+  padding: 0;
+}
+.poll-title-container {
+  background-color: #d3d3d3;
+  padding: 9px;
+  color: black;
+}
+.poll-title-container h6 {
+  margin: 0;
+}
+.disabled-adder {
+  
+}
+.removelinkdefault {
+    color: black;
+    text-decoration: none;
+}
+.removelinkdefault:hover {
+  color: black;
+  text-decoration: none;
+}
+.removelinkdefault:visited {
+  text-decoration: none;
+}
+.removelinkdefault:active {
+  text-decoration: none;
+}
+.del-form {
+  border-radius: 0;
+  color: red;
+  padding: 0;
+}
+.text-muted {
+  padding: 0;
+}
+
+
+
+/* =========== 
+   POLL VOTING
+   =========== */
+
+.poll-selected {
+  background-color: #5bffbb;
+}
+.poll-selected:hover {
+  background-color: #45e5a5;
+}
+.polls-min-avatar {
+  width: 50%;
+  border-radius: 15%;
+  float: left;
+}
+.poll-choose {
+  height: 100%;
+}
+.poll-ans-row {
+  margin-bottom: 10px;
+}
+
+
+
+/* ============ 
+   RESULT GRAPH
+   ============ */
+
+
+
+.graph-bar-green {fill: #79e273;} .graph-bar-green:hover {fill: #97f791;}
+.graph-bar-pink {fill: #d14981;} .graph-bar-pink:hover {fill: #ff77af;}
+.graph-bar-red {fill: #c44c56;} .graph-bar-red:hover {fill: #f26d78;}
+.graph-bar-blue {fill: #225393;} .graph-bar-blue:hover {fill: #3b85e5;}
+.graph-bar-aqua {fill: #22b5a3;} .graph-bar-aqua:hover {fill: #42c5d3;}
+.graph-bar-yellow {fill: #f2d948;} .graph-bar-yellow:hover {fill: #ffeb7a;}
+.graph-bar-orange {fill: #cc7e3b;} .graph-bar-orange:hover {fill: #efad75;}
+.graph-bar-grey {fill: #b5b5b5;} .graph-bar-grey:hover {fill: #d8d8d8;}
+.graph-bar-purple {fill: #6739b2;} .graph-bar-purple:hover {fill: #a36bff;}
+.graph-bar-lime {fill: #8fce54;} .graph-bar-lime:hover {fill: #b4f477;}
+
+#chart {
+  padding: 0;
+  margin: 0;
+}
+
+
+/* =========== 
+   LOGIN STUFF
+   =========== */
+
+
+
+#logout {
+  color: #b20000;
+}
+#logout:hover {
+  color: #e50000;
+}
+
+.log {
+  color: rgba(255,255,255,.5);
+}
+.log:hover {
+  color: rgba(255,255,255,.75);
+}
+
+.nomarg {
+  margin: 0;
 }

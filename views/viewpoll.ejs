@@ -1,0 +1,50 @@
+
+<!-- TODO. VARS IN: user, error, authd, and poll -->
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
+</head>
+<div class="mincon container">
+  <form action="/voteonpoll/" class="rounded" method="post">
+    <div class="form-group" id="bigholderguy">
+      <h1 class="col-12"><%= poll.question %></h1>
+      <ul class="container">
+        <% for(answer in poll.answers) { 
+          var lastIndex = answer; %>
+          <li class="poll-ans-row col-12 row">
+            <div class="col-12 col-sm-8 col-md-9 input-group">
+              <div class="input-group-addon">
+                <div>
+                  <% if(authd) { if(answer == poll.votes[user.name]) { %>
+                    <img src="<%= user.icon64 %>" class="img img-responsive polls-min-avatar" alt="avatar"/>
+                  <% } } %>
+                  <small class="poll-votes-addon"> <%= poll.answers[answer] %></small>
+                </div>
+              </div>
+              <input class="form-control poll-ans" readonly value="<%= answer %>"/>
+            </div>
+            <div class="col-12 col-sm-4 col-md-3">
+              <button class="loginWith poll-choose btn-correct-row btn btn-success" type="button" value="<%= answer %>"> Choose. </button>
+            </div>
+          </li>
+        <% } %>
+      </ul>
+      <hr />
+      <svg id="chart" class="chart"></svg>
+      <% if(true) { console.log('linked'); %> <script src="/decodeEntities.js"></script>
+      <script>var answers = JSON.parse(decodeEntities("<%= JSON.stringify(poll.answers) %>")); 
+              function getAns() { return answers; } </script>
+      <% } %>
+      <% var userHasVoted = false; 
+      if(authd) { for(var i in poll.votes) { if(i == user.name) { userHasVoted = true; } } 
+      if(userHasVoted) { console.log('pollchart linked in'); %>
+        <script src="/pollchart.js"></script>
+      <% } } 
+        if(!userHasVoted) { %>
+          <script>$("#chart").attr("width", "0px").attr("height", "0px");</script>
+        <% } %>
+      <input hidden value="<%= poll.slug %>" name="s" />
+      <input type="submit" class="btn btn-success loginWith poll-submit" name="vote" value="Confirm: <%= lastIndex %>"/>
+      <!-- todo: make the last one light up -->
+    </div>
+  </form>
+</div>
