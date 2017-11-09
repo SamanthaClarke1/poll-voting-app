@@ -48,17 +48,19 @@
 
 ### General Buggyness Report
 ------
-*This will be updated by sam. **Only.***
+*This will be updated by SC. **Only.***
 
 > Very little buggyness has been found on the page. The only bugs I have found would be very hard to notice in a real situation, and only 1/10000 viewers would actually see them. Great job everybody, may you dream of clean code and electric sheep.
 
-> * *Updated: 10/11/17, 1:07AM*
+> * *Updated: 10/11/17, 1:37 AM*
 
   
 ------
 # Extra Notes :
 ------
-> C: Maybe we should reconsider the size at which the navbar collapses?
+> **SC** :  Maybe we should reconsider the size at which the navbar collapses?
 
-> C: Perhaps we should center [My Polls](https://poll-voting-app.glitch.me/account) If the screen gets too small? ~400x800 res
+> **SC** :  Perhaps we should center [My Polls](https://poll-voting-app.glitch.me/account) If the screen gets too small? ~400x800 res
+
+> **SC** :  ***Version: Alpha-0.1.2 Released! (Also known as version 📮🌷).*** Congratulations are in order, to celebrate this victory against eur-asia, ***chocolate rations have been raised by ten percent!***
 
