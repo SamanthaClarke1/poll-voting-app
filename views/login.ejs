@@ -1,41 +1,59 @@
-<div class="mincon container">
-  <div class="col-12 row">
-    <form class="formBox rounded col-12 col-lg-8 manual-logins" action="<% if(signup) { %>/auth/signin<% } else { %>/auth/login<% } %>" method="post">
+<div class="mincon container ">
+  <div class="col-12 row login-page-container">
+    <!--Dummy Div-->
+    <!--<div class="col-sm-1 dummy"></div>-->
+    <!--MANUAL LOGINS-->
+    
+    <form class="formBox rounded col-lg-6 manual-logins" action="<% if(signup) { %>/auth/signin<% } else { %>/auth/login<% } %>" method="post">
       <div class="login-header">
         <% if(signup) { %> <h2> Manual Signup </h2>
         <% } else { %>     <h2> Manual Login  </h2> <% } %>
-        <small class="text-muted">( Alpha-Numeric [a-z, 0-9] Only )</small> 
+        <hr class="title-underline">
       </div>
+      <!--Username-->
       <div class="form-group">
-        <label for="in-username"> User Name </label>
-        <input type="username" class="form-control" name="username" id="in-username" placeholder="Username" required>
+        <label for="in-username"> Username </label>
+        <input type="username" class="form-control" name="username" id="in-username" placeholder="Alpha-numeric only (a-z, 0-9)" required>
       </div>
-      <hr />
+      <!--Password-->
       <div class="form-group">
         <label for="in-password"> Password </label>
         <input type="password" class="form-control" name="password" id="in-password" placeholder="Password" required>
       </div>
+      <!--Confirm Password-->
       <% if(signup) { %>
       <div class="form-group">
         <label for="in-confirmpassword" class="col-form-label"> Confirm Password </label>
         <input type="password" class="form-control" name="confirmpassword" id="in-confirmpassword" placeholder="Confirm Password" required>
       </div>
+      <!--Submit Button-->
       <% } %>
-      <hr />
-      <input type="submit" value="<% if(signup) { %>Sign me up!<% } else { %>Log In<% } %>" class="loginWith btn btn-primary grow"/>
+
+      <input type="submit" value="<% if(signup) { %>Sign me up!<% } else { %>Log In<% } %>" class="btn btn-success loginWith"/>
+      <hr>
       <div>
-        <small class="text-muted">Or, alternatively...</small>
+        <small class="text-muted">No account?</small>
       </div>
-      <% if(!signup) {%> <a href="/login?signup=true" class="loginWith text-center"><h5>Signup</h5></a> 
-      <% } else { %> <a href="/login" class="loginWith text-center"><h5>Login</h5></a> <% } %>
+      <% if(!signup) {%> <a href="/login?signup=true" class="text-center btn btn-secondary" style="margin-top: 8px;"><h5>Signup</h5></a> 
+      <% } else { %> <a href="/login" class="text-center btn btn-secondary" style="margin-top: 8px;"><h5>Login</h5></a> <% } %>
     </form>
 
-    <div class="special-logins col-12 col-lg-4 formBox">
-      <small class="text-muted">Or log in with something fancy....</small>
+    <!--SPECIAL LOGINS-->
+    
+    <div class="special-logins col-lg-4 formBox rounded">
+      <!--Header-->
+      <div class="login-header">
+        <h2>Quick Login</h2>
+        <hr class="title-underline">
+      </div>
+
+      
+      <!--Github-->
+      
       <div class="col-12">
-        <a href="/auth/github">
+        <a href="/auth/github" class="removelinkdefault">
           <button class="btn btn-default loginWith loginWithGithub grow">
-            <img src="https://developers.google.com/site-assets/logo-github.svg"
+            <img src="https://s3-us-west-2.amazonaws.com/fortlauderdaletech.org/portfolio/icon-github.png"
                  alt="github" style="width: 32px; height: 32px;" class="login-icon" />
             <p class="login-special-text">
               Login with Github
@@ -43,8 +61,11 @@
           </button>
         </a>
       </div>
+      
+      <!--Facebook-->
+      
       <div class="col-12">
-        <a href="/auth/facebook">
+        <a href="/auth/facebook" class="removelinkdefault">
           <button class="btn btn-primary loginWith loginWithFacebook grow">
             <img src="http://www.optomsoc.com/wp-content/plugins/social-media-feather/synved-social/image/social/regular/128x128/facebook.png"
                  alt="github" style="width: 32px; height: 32px;" class="login-icon" />

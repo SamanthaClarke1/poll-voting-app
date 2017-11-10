@@ -7,6 +7,7 @@
   <form action="/voteonpoll/" class="rounded" method="post">
     <div class="form-group" id="bigholderguy">
       <h1 class="col-12"><%= poll.question %></h1>
+      <small class="col-12 text-muted"><i>Made on: <%= (new Date(poll.doc)).toDateString() %></i></small>
       <ul class="container">
         <% for(answer in poll.answers) { 
           var lastIndex = answer; %>
@@ -31,8 +32,13 @@
       <hr />
       <svg id="chart" class="chart"></svg>
       <% if(true) { console.log('linked'); %> <script src="/decodeEntities.js"></script>
-      <script>var answers = JSON.parse(decodeEntities("<%= JSON.stringify(poll.answers) %>")); 
-              function getAns() { return answers; } </script>
+      <script> // data linking
+        var answers = JSON.parse(decodeEntities("<%= JSON.stringify(poll.answers) %>")); 
+        var ansparams = JSON.parse(decodeEntities("<%= JSON.stringify(poll.ansparams) %>"));
+                                                console.log("params:  <%= JSON.stringify(poll.ansparams) %>");
+        function getAns() { return answers; } 
+        function getAnsParams() { return ansparams; } 
+      </script>
       <% } %>
       <% var userHasVoted = false; 
       if(authd) { for(var i in poll.votes) { if(i == user.name) { userHasVoted = true; } } 

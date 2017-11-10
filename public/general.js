@@ -1,4 +1,7 @@
 $(document).ready(function() {
+  
+
+  window.history.pushState("", "",window.location.href.split("err=")[0]) ;
   clearActiveNavis();
   if(window.location.href.slice(0, 34+17) == "https://poll-voting-app.glitch.me/login?signup=true") { 
     console.log('at signup');
@@ -11,12 +14,15 @@ $(document).ready(function() {
   else if(window.location.href.slice(0, 34+5) == "https://poll-voting-app.glitch.me/login") { 
     console.log('at login');
     $("#login-navi").addClass("active"); 
+  }else if(window.location.href.slice(0, 34+4) == "https://poll-voting-app.glitch.me/help") { 
+    console.log('at help');
+    $("#help-navi").addClass("active"); 
   }
   else if(window.location.href.slice(0, 34+0) == "https://poll-voting-app.glitch.me/") { 
     console.log('at home');
     $("#home-navi").addClass("active"); 
   }
-
+ 
   //$(".acc-polls-section").css("min-height", $(".acc-user-section").css("height"));
   //$(".acc-user-section").css("min-height", $(".acc-polls-section").css("height"));
 
@@ -69,7 +75,7 @@ $(document).ready(function() {
 
         $("#response").val('');
 
-        var u = "#index"+num;
+        var u = "#index"+(num);
         $("#index"+num).click(function() {
           $(u).remove();
           resetResponseNames();
@@ -90,15 +96,39 @@ $(document).ready(function() {
         }
         num++;
       }
+      resetResponseNames();
     }
   });
 
   function resetResponseNames() {
     $('.responses').each(function(){
         // this is inner scope, in reference to the .responses element
-        $(this).find('li').each(function(index){
-          $(this).attr('name', 'index' + index).attr('id', 'index' + index);
-        });
+        $(this).find('li').each(function(index) {
+          $(this).attr('id', 'index' + index);
+          $(this).find('input').each(function(index2) {
+            $(this).attr('id', 'iinput' + index);
+            $(this).attr('name', 'index' + index);
+          });
+          $(this).click(function() {
+            $(this).remove();
+            resetResponseNames();
+            //console.log($("#arrofvals").html());
+            //console.log($("#arrofvals").html().split("<li>"));
+            if($("#arrofvals").html().split("</li>").length > 1) {
+              $("#subm").prop("disabled", false);
+            }
+            else {
+              $("#subm").prop("disabled", true);
+            }
+          });
+          if($("#arrofvals").html().split("</li>").length > 1) {
+            $("#subm").prop("disabled", false);
+          }
+          else {
+            $("#subm").prop("disabled", true);
+          }
+        num++;
+      });
     });
   }
   
@@ -107,4 +137,8 @@ $(document).ready(function() {
     $(this).addClass("poll-selected");
     $(".poll-submit").val("Confirm: " + $(this).val() );
   });
+
+                                 
+
+  
 });

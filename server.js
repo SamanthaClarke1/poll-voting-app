@@ -1,4 +1,4 @@
-// server.js
+ // server.js
 // (reference) https://github.com/cfsghost/passport-github/blob/master/examples/login/app.js
 
 
@@ -35,7 +35,7 @@ app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: fals
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(passport.initialize());
-app.use(passport.session());+
+app.use(passport.session());
 app.use(express.static(__dirname + '/public'));
 
 
@@ -75,7 +75,7 @@ mongodb.connect(url, function (err, db) {
           else {
             if(!profile.displayName) profile.displayName = profile.username.split('-').join(' ');
             var toIns = {"id": profile.id, "name": profile.username, "displayName": profile.displayName, "githubLink": profile.profileUrl,
-                         "password": null, "bio": profile._json.bio, "secret": generateSecret(), "github": true};
+                         "password": null, "bio": profile._json.bio, "secret": generateSecret(), "github": true, following: [{ name: "Announcements"}]};
             if(profile.facebook) {
               toIns.facebook = true;
               toIns.github = false;
@@ -117,8 +117,8 @@ mongodb.connect(url, function (err, db) {
         process.nextTick(function () {
           //console.log(profile);
           // i need to adapt it to a 'github' standard one, then act as if it was github all along. that's what im doing here.
-          var gitUser = {id: profile.id, username: profile.name, displayName: profile.displayName, photos: profile.photos,
-                         profileUrl: profile.profileUrl, _json: {bio: "I just hate bios! That's why i won't set one."}};
+          var gitUser = {id: profile.id, username: displayNameToUsername(profile.displayName), displayName: profile.displayName, 
+                         photos: profile.photos, profileUrl: profile.profileUrl, following: [{ name: "Announcements"}], _json: {bio: "I just hate bios! That's why i won't set one."}};
           
           return githubReadyUp(accessToken, refreshToken, gitUser, done);
         });
@@ -146,7 +146,34 @@ mongodb.connect(url, function (err, db) {
 
     // http://expressjs.com/en/starter/basic-routing.html
     app.get("/", function (req, res) {
-      res.render('index', { user: req.user, error: req.query.err });
+      if(req.user) {
+        var now = Date.now();
+        var aDayAgo = now - (86400 * 5 * 1000);
+        pollsDB.find({$or: req.user.following, doc: {$gt: aDayAgo} }).sort({doc: 1}).toArray(function(err, data) {
+          if(err) throw err;
+          else {
+            var friendPolls = data;
+            
+            pollsDB.find({ doc: {$gt: aDayAgo} }).sort({doc: 1}).toArray(function(err, data) {
+              if(err) throw err;
+              data.splice(30);
+              friendPolls.splice(30);
+              var npolls = data;
+              
+              res.render("index.ejs", {error: req.query.err, user: req.user, friendpolls: friendPolls, polls: npolls});
+            });
+          }
+        })
+      } else {
+        var now = Date.now();
+        pollsDB.find({ doc: {$gt: aDayAgo} }).sort({doc: 1}).toArray(function(err, data) {
+          if(err) throw err;
+          data.splice(30);
+          var npolls = data;
+
+          res.render("index.ejs", {error: req.query.err, user: req.user, friendpolls: false, polls: npolls});
+        });
+      }
     });
     
     /*app.post('/submitavatar', ensureAuthenticated, function(req, res) {
@@ -174,6 +201,14 @@ mongodb.connect(url, function (err, db) {
       }
     });*/
     
+    app.get("/help", function(req, res) {
+      res.render("help.ejs", {error: req.query.err, user: req.user});
+    });
+    
+    app.get("/pollmarkdown", function(req, res) {
+      res.render("pollmarkdown.ejs", {error: req.query.err, user: req.user});
+    });
+    
     app.post('/deletepoll', ensureAuthenticated, function(req, res) {
       var pslug = req.body.poll;
       console.log("slug: " + pslug);
@@ -195,11 +230,56 @@ mongodb.connect(url, function (err, db) {
       var doc = Date.now();
       
       var slug = makeSlug(7, 7);
-      var toIns = {slug: slug, url: "/viewpoll/?s=" + slug, username: req.user.name, votes: {}, doc: doc,
-                   displayName: req.user.displayName, answers: {}, question: req.body.question};
+      var toIns = {slug: slug, url: "/viewpoll/?s=" + slug, username: req.user.name, votes: {}, doc: doc, icon64: req.user.icon64,
+                   displayName: req.user.displayName, answers: {}, question: req.body.question, ansparams: {}};
       
+      var answers = [];
       for(var i = 0; i < 30; i++) {
-        var tans = req.body["index" + i];
+        var tempans = req.body["index" + i];
+        if(tempans) answers.push(tempans);
+        //console.log(tempans + "  index: " + i);
+      }
+      for(var i = 0; i < answers.length; i++) {
+        var colorIndex = 0;
+        var possibleColors = ['green', 'aqua', 'blue', 'purple', 'red', 'pink', 'orange', 'yellow', 'grey', 'lime'];
+        var tempans = answers[i];
+        //console.log("adding ans: " + tempans + "  answers: " + answers.toString());
+        
+        if(tempans) {
+          var tans = "";
+          var isInParam = false;
+          var params = {}
+          var tparam = "";
+
+          // turns tempans into tans and parameters. Example: tempans="Blue is the best color ##color:blue##" Then, tans="Blue is the best color" and params={"color": "blue"}
+          for(var j = 0; j < tempans.length - 1; j++) {
+            if(tempans[j] == "#" && tempans[j + 1] == "#") {
+              if(isInParam) {
+                var splitparam = tparam.split(":");
+                params[splitparam[0]] = splitparam[1];
+              }
+              if(!isInParam) {
+                j += 1; // skip the other hash
+              }
+              isInParam = !isInParam; // detects ##
+            }
+            else if(!isInParam) {
+              tans += tempans[j];
+              if(j == tempans.length - 2) tans += tempans[j + 1]; // if its the last iteration
+            }
+            else {
+              tparam += tempans[j];
+            }
+          }
+          
+          if(!params.color) { // if they didnt set a color, set one for them, in rainbow/ascending order.
+            params.color = possibleColors[colorIndex];
+            colorIndex ++;
+            colorIndex %= possibleColors.length;
+          }
+          
+        }
+        if(tans) toIns.ansparams[tans] = params;
         if(tans) toIns.answers[tans] = 0;
       }
       
@@ -230,8 +310,8 @@ mongodb.connect(url, function (err, db) {
                   poll.answers[poll.votes[vote]] += 1; // votes = {person: answerTheyVotedOn}, and poll.answers = {answer: amountOfVotesForIt}
                 }
 
-                pollsDB.update({slug: req.body.s}, {slug: poll.slug, url: poll.url, username: poll.username, votes: poll.votes,
-                                 displayName: poll.displayName, answers: poll.answers, question: poll.question}, function(err, data) {
+                pollsDB.update({slug: req.body.s}, {slug: poll.slug, url: poll.url, username: poll.username, votes: poll.votes, doc: poll.doc, icon64: poll.icon64,
+                                 displayName: poll.displayName, answers: poll.answers, question: poll.question, ansparams: poll.ansparams}, function(err, data) {
                   if(err) throw err;
                   res.redirect(poll.url);
                 });
@@ -348,8 +428,10 @@ mongodb.connect(url, function (err, db) {
              .quality(64)                 // set JPEG quality 
              .write("./public/avatars/" + slug + ".jpg"); // save 
         
-        usersDB.update({name: user.name}, {name: user.name, password: user.password, img: user.img, displayName: user.displayName,
-                                             icon64: user.icon64, secret: user.secret, github: user.github, bio: user.bio, githubLink: user.githubLink}, function(err) {
+        usersDB.update({name: user.name}, {name: user.name, password: user.password, img: user.img, 
+                                           displayName: user.displayName, following: [{ name: "Announcements"}],
+                                           icon64: user.icon64, secret: user.secret, github: user.github, 
+                                           bio: user.bio, githubLink: user.githubLink}, function(err) {
             if(err) throw err;
             res.redirect('/account');
           });
@@ -372,7 +454,9 @@ mongodb.connect(url, function (err, db) {
                       "secret": generateSecret(),
                       "profileUrl": "https://poll-voting-app.glitch.me/paccount/" + displayNameToUsername(req.body.username),
                       "bio": "I hate bio's so much, I won't even set one!",
-                      "githubLink": null
+                      "githubLink": null,
+                      following: ["Announcements"],
+                      facebook: false
                     };
         usersDB.findOne({"name": toIns.name}, function(err, data) {
           if(err) throw err;
