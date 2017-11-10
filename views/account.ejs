@@ -27,41 +27,38 @@
           <input type="username" class="form-control" name="bio" id="in-bio" 
                  value="<% if(user.bio && user.bio != "") { %> <%= user.bio %> <% } else { %> I hate bio's so much, I won't even set one! <% } %>" />
         <% } %>
+        <!--GITHUB BUTTON-->
         <% if(!editing && user.github) { %> 
           <a href="<%= user.githubLink %>">
-            <button class="loginWith col-12 btn btn-default">
-              <img src="https://developers.google.com/site-assets/logo-github.svg" alt="github" style="width: 32px; height: 32px;"/>
+            <button class="loginWith col-10 btn btn-default login-github">
+              <img src="https://diversity.github.com/assets/svg/mark-github.svg" alt="github" style="width: 32px; height: 32px;"/>
             </button>
           </a>
         <% } %>
+        <!--SECRET BUTTON-->
         <% if(!public && !editing) { %>
-            <div class="col-12 row nomarg">
-              <p class="col-6">
-                 Secret: 
-              </p>
-              <button id="secretBtn" class="btn btn-info col-6">Show Me</button> 
-            </div>
-            <div class="col-12">
-              <input id="userSecret" style="display: none;" class="col-12 text-muted" value="<%= user.secret %>" readonly></input>
-            </div>
-            <div class="col-12 row nomarg">
-              <div class="container col-12">
-                <% if(!editing) { %>
-                  <a href="/account?editing=true">
-                    <button class="btn btn-success acc-edit-btn">
-                      <i class="fa fa-pencil" aria-hidden="true"></i> Edit
-                    </button>
-                  </a>
-                <% } else { %>
-                  <a href="/account?editing=true">
-                    <button class="btn btn-success acc-edit-btn">
-                      <i class="fa fa-pencil" aria-hidden="true"></i> Edit
-                    </button>
-                  </a>
-                  <input type="submit" value="Update!" class="acc-edit-btn btn btn-success" />
-                <% } %>
-              </div>
-            </div>
+          <div class="col-12 row nomarg">
+            <p class="col-5">
+               Secret: 
+            </p>
+            <button id="secretBtn" class="btn btn-info col-5">Show Me</button> 
+          </div>
+          <!--SECRET TEXT FIELD-->
+          <div class="col-10">
+            <input id="userSecret" style="display: none;" class="col-12 text-muted" value="<%= user.secret %>" readonly></input>
+          </div>
+            <!--EDIT BUTTON-->
+          <div class="container col-10">
+            <% if(!editing) { %>
+              <a href="/account?editing=true">
+                <button class="btn btn-success acc-edit-btn">
+                  <i class="fa fa-pencil" aria-hidden="true"></i> Edit
+                </button>
+              </a>
+            <% } else { %>
+              <input type="submit" value="Update!" class="acc-edit-btn btn btn-success" />
+            <% } %>
+          </div>
         <% } %>
       </div> 
   
@@ -72,7 +69,7 @@
       <div class="col-lg-8 col-12 acc-mbar acc-polls-section rows">
         <div class="polls-text row col-12 poll-title">
           <h3 class="col-lg-10 col-12 my-polls-title-text">My Polls</h3>
-          <a href="/createpoll" class="col-lg-2 col-12 create-btn" style="height: 50%;">
+          <a href="/createpoll" class="col-lg-2 col-12 create-btn" style="min-height: 100%;">
             <button class="col-12 btn btn-success loginWith polls-text-b btn-correct-row">
               Create <i class="fa fa-plus" aria-hidden="true"></i>
             </button>
@@ -95,9 +92,9 @@
                           <h6><%= poll.question %></h6>
                         </a>
                         <% if (!public) { %>
-                          <button type="submit" class="input-group-addon btn btn-danger">
-                            <i class="fa fa-trash-o" aria-hidden="true"></i>
-                          </button>
+                        <button type="submit" class="input-group-addon btn btn-danger del-btn">
+                          <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
                         <% } %>
                       </div>
                     <% if(!editing && !public) { %> </form> <% } %>

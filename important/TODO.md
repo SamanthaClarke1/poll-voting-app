@@ -7,21 +7,28 @@
 
 | Subject                                           | Person          | Done? |
 |:------------------------------------------------- |:---------------:|:-----:|
+| Add more markdown to **/createpoll**              |                 |*No*   |
 | Fixup and clean up the resize behaviour of /account.ejs                                                                           |Krystof & Clarkey|**Yes**|
-| Improve the look of /createpoll.ejs along with some elements of its behaviour                                                     |Clarkey          |**Ish**|
-| Create the actual main page. It ain't there.      |                 |*No*   |
-| Remove errors from the persons url, after the page loads. *(just do it in js and add this to the general.js file)*               |                 |*No*   |
-| Fix delete buttons on /account                    |Krystof          |**Yes**|
-| Clean the TODO.md up *(yes, i see the irony.)*    |Clarkey          |**Yes**|
+| Improve the look of **/createpoll.ejs** along with some elements of its behaviour                                           |Clarkey          |**Yes**|
+| Create/draft the actual main page. It ain't there.|Krystof & Clarkey|*No*   |
+| Remove errors from the persons url, after the page loads. *(just do it in js and add this to the general.js file)*               |Harrison         |**Yes**| 
+| Fix delete buttons on **/account**                |Krystof          |**Yes**|
+| Clean the **TODO.md** up *(yes, I see the irony.)*|Clarkey          |**Yes**|
 | Facebook signup button & redo of the login/signup page for desktops                                                               |Clarkey          |**Yes**|
-| Check up on /paccount viewing, and debug it if it's not working                                                                   |Clarkey          |**Yes**|
-| Fixup and clean up the graph on /viewpoll.ejs     |Clarkey          |**Yes**|
+| Check up on **/paccount** viewing, and debug it if it's not working                                                               |Clarkey          |**Yes**|
+| Fixup and clean up the graph on **/viewpoll.ejs** |Clarkey          |**Yes**|
 | Redo icons and some navbar things                 |Krystof          |**Yes**|
 | createpoll.ejs - All of their possible answers MUST be unique                                                                     |Harrison         |**Yes**|
 | Verify more stuff on the client side before it is actually submitted.                                                             |Clarkey          |**Yes**|
-| Fix Login/Signup Page                             |                 |*No*   |
-| Add a coloring system to the polls                |Clarkey          |*No*   |
-
+| Fix Login/Signup Page                             |Krystof          |*No*   |
+| Add a coloring system to the polls                |Clarkey          |**Yes**|
+| Make the **/pollmarkdown.ejs** point              |Clarkey          |**Yes**|
+| Media queries for maxxximum support               |Krystof          |*No*   |
+| Add documentation and help                        |Harrison         |*No*   |
+| Add help link to the navbar                       |Harrison         |*No*   |
+| Add polls variable to the main page               |Clarkey          |**Yes**|
+| Redesign based around pastels/neons               |                 |*No*   |
+| Iteration of new polls in index                   |Clarkey          |*No*   |
 
 
 ------
@@ -37,7 +44,6 @@
 | Description                             | Page         | Resolution |.Sevrty|
 |:--------------------------------------- |:------------:|:----------:|:-----:|
 | Navbar looks too small.                 | layout.ejs   | 400x700    | 03/10 |
-| [Create Button](https://poll-voting-app.glitch.me/account) can't fit text.                                             | account.ejs  | ???x205    | 01/10 |
 | Login/Signup page broken on phones.     | login.ejs    | 730x420    | 06/10 |
 
 ### Vulnerability Alarms : 

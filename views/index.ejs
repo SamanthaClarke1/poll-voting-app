@@ -1,14 +1,113 @@
 <!DOCTYPE html>
 
 <html>
+  <head>
+    <script src="/rndback.js"></script>
+  </head>
+  
 	<body>
-    <div class="mincon container text-center">
-      <% if(user) { %> 
-        <h1> Hello <%= user.displayName %>! </h1>
-      <% } else { %>
-        <h1> Not logged in. </h1>
+    <!-- PARAMETERS PASSED IN. 
+      user :          the user object.
+      friendpolls :   the polls from friends, set to false if they aren't logged in.
+      polls :         the most recent polls that they got, but with an creator_img url.
+    -->
+    <div class="mincon container" style="text-align: left;">
+      
+      
+      <% if(user) { %>
+        <!--FRIENDS-->
+        <div class="section-container">
+          <!--Section Title-->
+          <div class="section-title-container row">
+            <h2 class="section-title col-sm-10">Friend's Polls</h2>
+            <button class="btn btn-success view-all-btn col-sm-2">View All</button>
+          </div>
+          <hr>
+          <!--Displayed Polls-->
+          <ul class="displayed-polls-container container row col-12">
+            <% for(var i = 0; i < friendpolls.length; i++) { %>
+              <li class="poll-thumb col-lg-4 col-12 rndback">
+                <h3 class="poll-thumb-question col-12">
+                  <a href="<%= polls[i].url %>"<b><%= polls[i].question %></b></a>
+                </h3>
+                
+                <div class="poll-thumb-userbar col-12 row">
+                  <div class="poll-thumb-icon">
+                    <img src="<%= friendpolls[i].icon64 %>" class="img-responsive img rounded poll-thumb-icon" />
+                  </div>
+                  <div class="col-9 row poll-thumb-user">
+                    <h5 class="poll-thumb-username col-12">
+                      <%= friendpolls[i].displayName %>
+                    </h5>
+                    <hr class="col-12" />
+                    <small class="poll-thumb-date col-12">
+                      <%
+                        var day = Date.now() / (86400 * 1000);
+                        var dayoc = polls[i].doc / (86400 * 1000);
+                        var daysFrom = Math.round((day - dayoc) * 10) / 10;
+                      %>
+                      <%= "~" + daysFrom + " days ago"%>
+                    </small>
+                  </div>
+                </div>
+              </li>
+            <% } %>
+          </ul>
+        </div>
       <% } %>
+      
+      
+      
+      
+      
+      <!-- Recent polls -->
+      <div class="section-container">
+        <!--Section Title-->
+        <div class="section-title-container row">
+          <h2 class="section-title col-sm-10">Recent Polls</h2>
+          <button class="btn btn-success view-all-btn col-sm-2">View All</button>
+        </div>
+        <hr>
+        <!--Displayed Polls-->
+        <ul class="displayed-polls-container container row no-gutters col-12">
+          <% for(var i = 0; i < polls.length; i++) { %>
+          <% if(i % 3 == 0) { %>
+            <div class="row col-12 poll-thumb-group" id="poll-thumb-group">
+          <% } %>
+          <div class="col-lg-4 col-12">
+            <li class="poll-thumb poll-thumb-spaceme rndback">
+              <a href="<%= polls[i].url %>" class="removelinkdefault poll-thumb-question col-12">
+                <h3 class="poll-thumb-question col-12"><%= polls[i].question %></h3>
+              </a>
+              <div class="poll-thumb-userbar col-12 row">
+                <div class="poll-thumb-icon">
+                  <img src="<%= polls[i].icon64 %>" class="img-responsive img rounded poll-thumb-icon rndbord"/>
+                </div>
+                <div class="col-9 row poll-thumb-user">
+                  <h5 class="poll-thumb-username col-12">
+                    <%= polls[i].displayName %>
+                  </h5>
+                  <hr class="col-12" />
+                  <small class="poll-thumb-date col-12">
+                    <%
+                      var day = Date.now() / (86400 * 1000);
+                      var dayoc = polls[i].doc / (86400 * 1000);
+                      var daysFrom = Math.round((day - dayoc) * 10) / 10;
+                    %>
+                    <%= "~" + daysFrom + " days ago"%>
+                    </small>
+                  </div>
+                </div>
+              </li>
+            </div>
+            <% if(i % 3 == 2 || i == polls.length - 1) { %>
+              </div>
+            <% } %>
+          <% } %>
+        </ul>
+      </div>
     </div>
+    
 	</body>
 
 </html>
