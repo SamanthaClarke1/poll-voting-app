@@ -1,24 +1,31 @@
 $(document).ready(function() {
   
 
-  window.history.pushState("", "",window.location.href.split("err=")[0]) ;
+  if(window.location.href.indexOf("err=") != -1) window.history.pushState("", "",window.location.href.split("err=")[0]) ;
+  
   clearActiveNavis();
-  if(window.location.href.slice(0, 34+17) == "https://poll-voting-app.glitch.me/login?signup=true") { 
+  var url = "https://poll-voting-app.glitch.me/";
+  var urlsize = 34;
+  if(window.location.href.slice(0, urlsize+17) == url+"login?signup=true") { 
     console.log('at signup');
     $("#signup-navi").addClass("active"); 
   }
-  else if(window.location.href.slice(0, 34+7) == "https://poll-voting-app.glitch.me/account") { 
+  else if(window.location.href.slice(0, urlsize+7) == url+"account") { 
     console.log('at account')
     $("#account-navi").addClass("active"); 
   }
-  else if(window.location.href.slice(0, 34+5) == "https://poll-voting-app.glitch.me/login") { 
+  else if(window.location.href.slice(0, urlsize+5) == url+"login") { 
     console.log('at login');
     $("#login-navi").addClass("active"); 
-  }else if(window.location.href.slice(0, 34+4) == "https://poll-voting-app.glitch.me/help") { 
+  }else if(window.location.href.slice(0, urlsize+4) == url+"help") { 
     console.log('at help');
     $("#help-navi").addClass("active"); 
   }
-  else if(window.location.href.slice(0, 34+0) == "https://poll-voting-app.glitch.me/") { 
+   else if(window.location.href.slice(0, urlsize+10) == url+"createpoll") { 
+    console.log('at add');
+    $("#add-navi").addClass("active"); 
+  }
+  else if(window.location.href.slice(0, urlsize+0) == url) { 
     console.log('at home');
     $("#home-navi").addClass("active"); 
   }
@@ -39,6 +46,7 @@ $(document).ready(function() {
     $("login-navi").removeClass("active"); 
     $("account-navi").removeClass("active"); 
     $("signup-navi").removeClass("active");
+     $("help-navi").removeClass("active");
   }
   var found = false;
   $("#response").keyup(function(){
@@ -81,14 +89,14 @@ $(document).ready(function() {
           resetResponseNames();
           //console.log($("#arrofvals").html());
           //console.log($("#arrofvals").html().split("<li>"));
-          if($("#arrofvals").html().split("</li>").length > 1) {
+          if($("#arrofvals").html().split("</li>").length > 2) {
             $("#subm").prop("disabled", false);
           }
           else {
             $("#subm").prop("disabled", true);
           }
         });
-        if($("#arrofvals").html().split("</li>").length > 1) {
+        if($("#arrofvals").html().split("</li>").length > 2) {
           $("#subm").prop("disabled", false);
         }
         else {
@@ -114,14 +122,14 @@ $(document).ready(function() {
             resetResponseNames();
             //console.log($("#arrofvals").html());
             //console.log($("#arrofvals").html().split("<li>"));
-            if($("#arrofvals").html().split("</li>").length > 1) {
+            if($("#arrofvals").html().split("</li>").length > 2) {
               $("#subm").prop("disabled", false);
             }
             else {
               $("#subm").prop("disabled", true);
             }
           });
-          if($("#arrofvals").html().split("</li>").length > 1) {
+          if($("#arrofvals").html().split("</li>").length > 2) {
             $("#subm").prop("disabled", false);
           }
           else {
@@ -138,7 +146,34 @@ $(document).ready(function() {
     $(".poll-submit").val("Confirm: " + $(this).val() );
   });
 
-                                 
-
+  $(".poll-thumb-group").each(function(index) {
+  });
   
+  $(".view-all-btn").click(function() {
+    if($("#poll-thumb-group-bottom").hasClass("rowOverride")) $("#poll-thumb-group-bottom").removeClass("rowOverride");
+    else $("#poll-thumb-group-bottom").addClass("rowOverride");
+  });
+
+  //$('div').each(function(index) {$(this).css("background", "url(https://flagspot.net/images/c/cu.gif)")})
+  
+  //Feckin toggle switch yet again
+  $(function() {
+    console.log('meep');
+    $('.toggle-handle').css("background", "#0275d8");
+    $("#toggle-event").change(function() {
+      // toggle the active class
+      //console.log('clicked');
+      if($(this).prop("checked")) {
+        //console.log("checked");
+        //$('.toggle-on').addClass("active");
+        //$('.toggle-off').removeClass("active");
+        $('.toggle-handle').css("background", "white");
+      } else {
+        //console.log("unchecked");
+        //$('.toggle-on').removeClass("active");
+        //$('.toggle-off').addClass("active");
+        $(".toggle-handle").css("background", "#0275d8");
+      }
+    });
+  })
 });

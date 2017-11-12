@@ -1,3 +1,4 @@
+
 <div class="mincon container">
   <form action="/addpoll" method="post">
     <div class="form-group">
@@ -24,10 +25,16 @@
         <input class="form-control" id="response" type="text" />
       </div>
       <ol id="arrofvals" class="responses">
-        <!-- this will be populated with code, see general.js -->
+        <!-- this will be populated using code, see general.js -->
       </ol>
       
       <input type="submit" id="subm" class="form-control btn btn-success" disabled value="Submit!" />
+    </div>
+    <div class="checkbox">
+      <label>
+        <input name="openpoll" id="toggle-event" data-toggle="toggle" type="checkbox">
+        Make poll open
+      </label>
     </div>
   </form>
 </div>
