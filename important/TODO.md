@@ -5,12 +5,12 @@
 
   
 
-| Subject                                           | Person          | Done? |
+| Subject/Issue                                     |Programmer on it |Closed?|
 |:------------------------------------------------- |:---------------:|:-----:|
-| Add more markdown to **/createpoll**              |                 |*No*   |
+| Add more markdown to **/createpoll**              |Clarkey          |**Yes**|
 | Fixup and clean up the resize behaviour of /account.ejs                                                                           |Krystof & Clarkey|**Yes**|
 | Improve the look of **/createpoll.ejs** along with some elements of its behaviour                                           |Clarkey          |**Yes**|
-| Create/draft the actual main page. It ain't there.|Krystof & Clarkey|*No*   |
+| Create/draft the actual main page. It ain't there.|Krystof & Clarkey|**Yes**|
 | Remove errors from the persons url, after the page loads. *(just do it in js and add this to the general.js file)*               |Harrison         |**Yes**| 
 | Fix delete buttons on **/account**                |Krystof          |**Yes**|
 | Clean the **TODO.md** up *(yes, I see the irony.)*|Clarkey          |**Yes**|
@@ -20,15 +20,18 @@
 | Redo icons and some navbar things                 |Krystof          |**Yes**|
 | createpoll.ejs - All of their possible answers MUST be unique                                                                     |Harrison         |**Yes**|
 | Verify more stuff on the client side before it is actually submitted.                                                             |Clarkey          |**Yes**|
-| Fix Login/Signup Page                             |Krystof          |*No*   |
+| Fix Login/Signup Page                             |Krystof          |**Yes**|
 | Add a coloring system to the polls                |Clarkey          |**Yes**|
 | Make the **/pollmarkdown.ejs** point              |Clarkey          |**Yes**|
-| Media queries for maxxximum support               |Krystof          |*No*   |
-| Add documentation and help                        |Harrison         |*No*   |
-| Add help link to the navbar                       |Harrison         |*No*   |
+| Media queries for maxxximum support               |{Rq Canceled}    |**Yes**|
+| Add documentation and help                        |Harrison         |**Yes**|
+| Add help link to the navbar                       |Harrison         |**Yes**|
 | Add polls variable to the main page               |Clarkey          |**Yes**|
-| Redesign based around pastels/neons               |                 |*No*   |
-| Iteration of new polls in index                   |Clarkey          |*No*   |
+| Redesign based around pastels/neons               |Krystof & Clarkey|**Ish**|
+| Iteration of new polls in index                   |Clarkey          |**Yes**|
+| Add your own options to poll lists if you don't like options, and the poll is open.                                               |Clarkey          |*No*   |
+| Clicking on peoples faces on the homepage brings up their account page                                                           |                 |*No*   |
+| Add the option to close / open a poll             |Krystof          |**Yes**|
 
 
 ------

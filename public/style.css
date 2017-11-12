@@ -8,9 +8,11 @@
   box-sizing: border-box;
 }
 
+
 body {
   font-family: 'Lato', helvetica, arial, sans-serif;
   background: #f9f9f9;
+   
 }
 
 .mincon {
@@ -98,10 +100,7 @@ body {
    ==== */
 
 
-.section-title-container {
-  padding: 0;
-  margin: 0;
-}
+
 .section-title {
   padding: 0;
   margin: 0;
@@ -125,8 +124,11 @@ body {
   padding: 0;
 }
 .poll-thumb-question {
-  text-align: center;
+  display: flex;
+  justify-content: center;
   height: 65%;
+  padding: 5px 10px;
+  text-align: center;
 }
 .poll-thumb-question-text {
   color: white;
@@ -134,14 +136,19 @@ body {
   -o-transition: all .2s linear;
   -webkit-transition: all .2s linear;
   transition: all .2s linear;
+  align-self: center;
+}
+.poll-thumb-question-text:hover {
+  color: black;
 }
 .poll-thumb-userbar {
   position: absolute;
   bottom: 0;
-  padding: 10px;
+  padding: 7px 5px 5px;
   background-color: rgba(255, 255, 255, 0.6);
-  height: 35%;
+  height: 30%;
   border-radius: 10px 10px 6px 6px;
+  margin-top: 5px;
 }
 .poll-thumb-icon {
   width: 48px;
@@ -151,15 +158,25 @@ body {
 .poll-thumb-spaceme {
   margin: 5px;
 }
-#poll-thumb-group {
-  padding-left: 0;
-  padding-right: 0;
+#poll-thumb-group-bottom {
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+#viewall-container {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+.poll-thumb-username {
+  font-size: 17px;
 }
 
 
 /* ======= 
    ACCOUNT
    ======= */
+
+
 
 .loginWith {
   width: 100%;
@@ -367,6 +384,11 @@ label {
   border-radius: 15%;
   float: left;
 }
+.polls-min-avatar-right {
+  width: 50%;
+  border-radius: 15%;
+  float: right;
+}
 .poll-choose {
   height: 100%;
 }
@@ -380,19 +402,24 @@ label {
    RESULT GRAPH
    ============ */
 
+.graph-bar {
+  color: white;
+}
 
-
-.graph-bar-green {fill: #79e273;} .graph-bar-green:hover {fill: #97f791;}
-.graph-bar-pink {fill: #d14981;} .graph-bar-pink:hover {fill: #ff77af;}
-.graph-bar-red {fill: #c44c56;} .graph-bar-red:hover {fill: #f26d78;}
-.graph-bar-blue {fill: #225393;} .graph-bar-blue:hover {fill: #3b85e5;}
-.graph-bar-aqua {fill: #22b5a3;} .graph-bar-aqua:hover {fill: #42c5d3;}
-.graph-bar-yellow {fill: #f2d948;} .graph-bar-yellow:hover {fill: #ffeb7a;}
-.graph-bar-orange {fill: #cc7e3b;} .graph-bar-orange:hover {fill: #efad75;}
-.graph-bar-grey {fill: #b5b5b5;} .graph-bar-grey:hover {fill: #d8d8d8;}
-.graph-bar-purple {fill: #6739b2;} .graph-bar-purple:hover {fill: #a36bff;}
-.graph-bar-lime {fill: #8fce54;} .graph-bar-lime:hover {fill: #b4f477;}
-
+.graph-bar-green {fill: #79e273; background: #79e273;} .graph-bar-green:hover {fill: #97f791; background: #97f791;}
+.graph-bar-pink {fill: #d14981; background: #d14981;} .graph-bar-pink:hover {fill: #ff77af; background: #ff77af;}
+.graph-bar-red {fill: #c44c56; background: #c44c56;} .graph-bar-red:hover {fill: #f26d78; background: #f26d78;}
+.graph-bar-blue {fill: #225393; background: #225393;} .graph-bar-blue:hover {fill: #3b85e5; background: #3b85e5;}
+.graph-bar-aqua {fill: #22b5a3; background: #22b5a3;} .graph-bar-aqua:hover {fill: #42c5d3; background: #42c5d3;}
+.graph-bar-yellow {fill: #f2d948; background: #f2d948;} .graph-bar-yellow:hover {fill: #ffeb7a; background: #ffeb7a;}
+.graph-bar-orange {fill: #cc7e3b; background: #cc7e3b;} .graph-bar-orange:hover {fill: #efad75; background: #efad75;}
+.graph-bar-grey {fill: #b5b5b5; background: #b5b5b5;} .graph-bar-grey:hover {fill: #d8d8d8; background: #d8d8d8;}
+.graph-bar-purple {fill: #6739b2; background: #6739b2;} .graph-bar-purple:hover {fill: #a36bff; background: #a36bff;}
+.graph-bar-lime {fill: #8fce54; background: #8fce54;} .graph-bar-lime:hover {fill: #b4f477; background: #b4f477;}
+.graph-bar-brown {fill: #af5108; background: #af5108;} .graph-bar-brown:hover {fill: #bf6118; background: #bf6118;}
+.graph-bar-black {fill: #0a0a08; background: #0a0a08;} .graph-bar-black:hover {fill: #1a1a18; background: #1a1a18;}
+.graph-bar-magenta {fill: #a82667; background: #a82667;} .graph-bar-magenta:hover {fill: #b83677; background: #b83677;}
+.graph-bar-lavender {fill: #6f25a8; background: #6f25a8;} .graph-bar-lavender:hover {fill: #7f35b8; background: #7f35b8;}
 #chart {
   padding: 0;
   margin: 0;
@@ -453,4 +480,46 @@ label {
 }
 #title-underline {
   margin: 0;
+}
+
+.rowOverride {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+.section-title-container {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+
+/* ============
+   ICON CLASSES
+   ============ */
+
+.icon32 {
+  height: 48px;
+  width: 48px;
+}
+.icon48 {
+  height: 48px;
+  width: 48px;
+}
+.icon64 {
+  height: 64px;
+  width: 64px;
+}
+
+
+
+/* =====================
+   FECKIN' TOGGLE SWITCH
+   ===================== */
+
+
+.toggle-off {
+  background-color: lightgray;
+  border: 5px solid lightgray;
+  padding: 5px;
 }

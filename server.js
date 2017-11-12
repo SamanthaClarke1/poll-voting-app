@@ -75,7 +75,7 @@ mongodb.connect(url, function (err, db) {
           else {
             if(!profile.displayName) profile.displayName = profile.username.split('-').join(' ');
             var toIns = {"id": profile.id, "name": profile.username, "displayName": profile.displayName, "githubLink": profile.profileUrl,
-                         "password": null, "bio": profile._json.bio, "secret": generateSecret(), "github": true, following: [{ name: "Announcements"}]};
+                         "password": null, "bio": profile._json.bio, "secret": generateSecret(), "github": true, following: [{ name: "Announcements"}, {name: "Hot_Stuff"}]};
             if(profile.facebook) {
               toIns.facebook = true;
               toIns.github = false;
@@ -118,7 +118,7 @@ mongodb.connect(url, function (err, db) {
           //console.log(profile);
           // i need to adapt it to a 'github' standard one, then act as if it was github all along. that's what im doing here.
           var gitUser = {id: profile.id, username: displayNameToUsername(profile.displayName), displayName: profile.displayName, 
-                         photos: profile.photos, profileUrl: profile.profileUrl, following: [{ name: "Announcements"}], _json: {bio: "I just hate bios! That's why i won't set one."}};
+                         photos: profile.photos, profileUrl: profile.profileUrl, following: [{ name: "Announcements"}, {name: "Hot_Stuff"}], _json: {bio: "I just hate bios! That's why i won't set one."}};
           
           return githubReadyUp(accessToken, refreshToken, gitUser, done);
         });
@@ -146,34 +146,16 @@ mongodb.connect(url, function (err, db) {
 
     // http://expressjs.com/en/starter/basic-routing.html
     app.get("/", function (req, res) {
-      if(req.user) {
-        var now = Date.now();
-        var aDayAgo = now - (86400 * 5 * 1000);
-        pollsDB.find({$or: req.user.following, doc: {$gt: aDayAgo} }).sort({doc: 1}).toArray(function(err, data) {
-          if(err) throw err;
-          else {
-            var friendPolls = data;
-            
-            pollsDB.find({ doc: {$gt: aDayAgo} }).sort({doc: 1}).toArray(function(err, data) {
-              if(err) throw err;
-              data.splice(30);
-              friendPolls.splice(30);
-              var npolls = data;
-              
-              res.render("index.ejs", {error: req.query.err, user: req.user, friendpolls: friendPolls, polls: npolls});
-            });
-          }
-        })
-      } else {
-        var now = Date.now();
-        pollsDB.find({ doc: {$gt: aDayAgo} }).sort({doc: 1}).toArray(function(err, data) {
-          if(err) throw err;
-          data.splice(30);
-          var npolls = data;
+      var now = Date.now();
+      var aDayAgo = now - (86400 * 5 * 1000);
+      
+      pollsDB.find({ doc: {$gt: aDayAgo} }).sort({doc: -1}).toArray(function(err, data) {
+        if(err) throw err;
+        data.splice(30);
+        var npolls = data;
 
-          res.render("index.ejs", {error: req.query.err, user: req.user, friendpolls: false, polls: npolls});
-        });
-      }
+        res.render("index.ejs", {error: req.query.err, user: req.user, friendpolls: false, polls: npolls});
+      });
     });
     
     /*app.post('/submitavatar', ensureAuthenticated, function(req, res) {
@@ -228,20 +210,28 @@ mongodb.connect(url, function (err, db) {
     
     app.post('/addpoll', ensureAuthenticated, function(req, res) {
       var doc = Date.now();
+      console.log(req.body.openpoll);
       
       var slug = makeSlug(7, 7);
       var toIns = {slug: slug, url: "/viewpoll/?s=" + slug, username: req.user.name, votes: {}, doc: doc, icon64: req.user.icon64,
-                   displayName: req.user.displayName, answers: {}, question: req.body.question, ansparams: {}};
+                   displayName: req.user.displayName, answers: {}, question: req.body.question, ansparams: {}, openpoll: req.body.openpoll};
       
       var answers = [];
       for(var i = 0; i < 30; i++) {
         var tempans = req.body["index" + i];
-        if(tempans) answers.push(tempans);
+        if(tempans) {
+          if(tempans.length > 120) {
+            res.redirect("/createpoll?err=Input%20Fields%20Too%20Long!");
+            return 0;
+          }
+          answers.push(tempans);
+        }
         //console.log(tempans + "  index: " + i);
       }
+      var colorIndex = 0;
       for(var i = 0; i < answers.length; i++) {
-        var colorIndex = 0;
-        var possibleColors = ['green', 'aqua', 'blue', 'purple', 'red', 'pink', 'orange', 'yellow', 'grey', 'lime'];
+        var possibleColors = ['green', 'aqua', 'blue', 'purple', 'red', 'pink', 'orange', 
+                              'yellow', 'grey', 'lime', 'brown', 'black', 'magenta', 'lavender'];
         var tempans = answers[i];
         //console.log("adding ans: " + tempans + "  answers: " + answers.toString());
         
@@ -256,7 +246,7 @@ mongodb.connect(url, function (err, db) {
             if(tempans[j] == "#" && tempans[j + 1] == "#") {
               if(isInParam) {
                 var splitparam = tparam.split(":");
-                params[splitparam[0]] = splitparam[1];
+                params[splitparam[0]] = splitparam.splice(1).join(":");
               }
               if(!isInParam) {
                 j += 1; // skip the other hash
@@ -279,6 +269,8 @@ mongodb.connect(url, function (err, db) {
           }
           
         }
+        
+        if(tans != tans || !tans) { tans = "~~~"; } /// not x != x is testing for NaN, because js logic errors
         if(tans) toIns.ansparams[tans] = params;
         if(tans) toIns.answers[tans] = 0;
       }
@@ -311,7 +303,7 @@ mongodb.connect(url, function (err, db) {
                 }
 
                 pollsDB.update({slug: req.body.s}, {slug: poll.slug, url: poll.url, username: poll.username, votes: poll.votes, doc: poll.doc, icon64: poll.icon64,
-                                 displayName: poll.displayName, answers: poll.answers, question: poll.question, ansparams: poll.ansparams}, function(err, data) {
+                                 displayName: poll.displayName, answers: poll.answers, question: poll.question, ansparams: poll.ansparams, openpoll: poll.openpoll}, function(err, data) {
                   if(err) throw err;
                   res.redirect(poll.url);
                 });
@@ -330,7 +322,7 @@ mongodb.connect(url, function (err, db) {
         if(err) throw err;
         if(!poll) res.redirect("/?err=Poll%20not%20found!");
         else {
-          res.render('viewpoll', { user: req.user, error: req.query.err, poll: poll, authd: (req.user != undefined) });
+          res.render('viewpoll', { user: req.user, error: req.query.err, poll: poll, authd: (req.user != undefined && req.user != null) });
         }
       })
     });
@@ -429,7 +421,7 @@ mongodb.connect(url, function (err, db) {
              .write("./public/avatars/" + slug + ".jpg"); // save 
         
         usersDB.update({name: user.name}, {name: user.name, password: user.password, img: user.img, 
-                                           displayName: user.displayName, following: [{ name: "Announcements"}],
+                                           displayName: user.displayName, following: [{ name: "Announcements"}, {name: "Hot_Stuff"}],
                                            icon64: user.icon64, secret: user.secret, github: user.github, 
                                            bio: user.bio, githubLink: user.githubLink}, function(err) {
             if(err) throw err;
@@ -439,7 +431,8 @@ mongodb.connect(url, function (err, db) {
     });
     
     app.post('/auth/signin', function(req, res, next) {
-      if(req.body.password != req.body.confirmpassword && req.body.password != "" && req.username != "") {
+      if(req.body.username.length > 25 || req.body.password > 25 || req.body.confirmpassword > 25) res.redirect("/login?signup=true&err=Input%20Fields%20Too%20Long!");
+      else if(req.body.password != req.body.confirmpassword && req.body.password != "" && req.username != "") {
         //console.log("error on first catch /auth/signin !"); 
         if(req.username == "") res.redirect("/login?signup=true&err=Username%20cant%20be%20blank!");
         else if(req.body.password == "") res.redirect("/login?signup=true&err=Password%20can't%20be%20blank!");
@@ -455,7 +448,7 @@ mongodb.connect(url, function (err, db) {
                       "profileUrl": "https://poll-voting-app.glitch.me/paccount/" + displayNameToUsername(req.body.username),
                       "bio": "I hate bio's so much, I won't even set one!",
                       "githubLink": null,
-                      following: ["Announcements"],
+                      following: [{ name: "Announcements"}, {name: "Hot_Stuff"}],
                       facebook: false
                     };
         usersDB.findOne({"name": toIns.name}, function(err, data) {
@@ -575,4 +568,4 @@ function makeSlug(min, max) {
   } 
   return t;
 }
-// https://pastebin.com/LSWEmQwT
+// https://pastebin.com/LSWEmQwT holy shiet that a whole lotta code. Just sayin'

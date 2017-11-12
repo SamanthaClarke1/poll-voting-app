@@ -1,7 +1,6 @@
 <div class="mincon container ">
   <div class="col-12 row login-page-container">
-    <!--Dummy Div-->
-    <!--<div class="col-sm-1 dummy"></div>-->
+    
     <!--MANUAL LOGINS-->
     
     <form class="formBox rounded col-lg-6 manual-logins" action="<% if(signup) { %>/auth/signin<% } else { %>/auth/login<% } %>" method="post">
@@ -34,8 +33,8 @@
       <div>
         <small class="text-muted">No account?</small>
       </div>
-      <% if(!signup) {%> <a href="/login?signup=true" class="text-center btn btn-secondary" style="margin-top: 8px;"><h5>Signup</h5></a> 
-      <% } else { %> <a href="/login" class="text-center btn btn-secondary" style="margin-top: 8px;"><h5>Login</h5></a> <% } %>
+      <% if(!signup) {%> <a href="/login?signup=true" class="text-center btn btn-outline-info" style="margin-top: 8px;"><h5>Signup</h5></a> 
+      <% } else { %> <a href="/login" class="text-center btn btn-outline-info" style="margin-top: 8px;">Login</h5></a> <% } %>
     </form>
 
     <!--SPECIAL LOGINS-->
