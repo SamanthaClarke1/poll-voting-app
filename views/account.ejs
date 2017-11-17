@@ -89,7 +89,7 @@
                       <div class="input-group">
                         <!--Poll Title-->
                         <a href="<%= poll.url %>" class="poll-title-container removelinkdefault" style="width: 100%">
-                          <h6><%= poll.question %></h6>
+                          <h6><%= poll.question.split("&#46;").join(".") %></h6>
                         </a>
                         <% if (!public) { %>
                         <button type="submit" class="input-group-addon btn btn-danger del-btn">

@@ -1,15 +1,16 @@
 
-<!-- TODO. VARS IN: user, error, authd, and poll -->
+<!-- TODO. VARS IN: user, error, authd, owner, and poll -->
 <head>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
 </head>
 <div class="mincon container">
+  <input id="slug-hidden-val-holder" value="<%=poll.slug%>" readonly hidden>
   <form action="/voteonpoll/" class="rounded" method="post">
     <div class="form-group" id="bigholderguy">
-      <h1 class="col-12"><%= poll.question %></h1>
+      <h1 class="col-12"><%= poll.question.split("&#46;").join(".") %></h1>
       <small class="col-12 text-muted"><i>Made on: <%= (new Date(poll.doc)).toDateString() %></i></small>
       <ul class="container">
-        <% for(answer in poll.answers) { 
+        <% for(var answer in poll.answers) { 
           var lastIndex = answer; %>
           <li class="poll-ans-row col-12 row">
             <div class="col-12 col-sm-8 col-md-9 graph-bar-<%= poll.ansparams[answer].color %> rounded input-group">
@@ -21,7 +22,7 @@
                   <small class="poll-votes-addon"> <%= poll.answers[answer] %></small>
                 </div>
               </div>
-              <input class="form-control poll-ans" readonly value="<%= answer %>"/>
+              <input class="form-control poll-ans" readonly value="<%= answer.split("&#46;").join(".") %>"/>
               <% if(poll.ansparams[answer].image) { %>
                 <div class="input-group-addon">
                   <div>
@@ -29,13 +30,31 @@
                   </div>
                 </div>
               <% } %>
+              <% if(owner) { %>
+                <div class="input-group-addon" style="padding:0;">
+                  <a href="/delans?ans=<%=answer%>&s=<%=poll.slug%>" style="height:100%;">
+                    <button type="button" class="btn btn-danger col-12" style="height:100%;">
+                      <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    </button>
+                  </a>
+                </div>
+              <% } %>
             </div>
-            <div class="col-12 col-sm-4 col-md-3">
+            <div class="col-12 col-sm-4 col-md-3 choose-button">
               <button class="loginWith poll-choose btn-correct-row btn btn-success" type="button" value="<%= answer %>"> Choose. </button>
             </div>
           </li>
         <% } %>
       </ul>
+      
+      <% if(owner || poll.openpoll == "on") { %>
+        <div class="row col-12" style="margin:0px;">
+          <label for="add-answer-txt" class="col-12">Add an answer</label>
+          <input type="input" id="add-answer-txt" class="col-12 col-sm-8 col-md-9 rounded form-control">
+          <button type="button" id="add-answer-submit" class="btn btn-success col-12 col-sm-4 col-md-3">Add Answer</button>
+        </div>
+      <% } %>
+      
       <hr />
       <svg id="chart" class="chart"></svg>
       <% if(true) { console.log('linked'); %> <script src="/decodeEntities.js"></script>
@@ -55,9 +74,9 @@
         if(!userHasVoted) { %>
           <script>$("#chart").attr("width", "0px").attr("height", "0px");</script>
         <% } %>
+      
       <input hidden value="<%= poll.slug %>" name="s" />
       <input type="submit" class="btn btn-success loginWith poll-submit" name="vote" value="Confirm: <%= lastIndex %>"/>
-      <!-- todo: make the last one light up -->
     </div>
   </form>
 </div>

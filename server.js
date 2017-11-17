@@ -19,6 +19,8 @@ var app = express();
 var passwordHash = require('password-hash');
 var flash=require("connect-flash");
 var Jimp = require("jimp");
+var possibleColors = ['green', 'aqua', 'blue', 'purple', 'red', 'pink', 'orange', 
+                      'yellow', 'grey', 'lime', 'brown', 'black', 'magenta', 'lavender'];
 
 var mongodb = require('mongodb').MongoClient;
 var url = 'mongodb://guest:'+process.env.MONGO_PASS+'@ds056979.mlab.com:56979/king-fcc';  // Connection URL.
@@ -213,14 +215,15 @@ mongodb.connect(url, function (err, db) {
       console.log(req.body.openpoll);
       
       var slug = makeSlug(7, 7);
+      console.log("going to /viewpoll/?s=" + slug);
       var toIns = {slug: slug, url: "/viewpoll/?s=" + slug, username: req.user.name, votes: {}, doc: doc, icon64: req.user.icon64,
-                   displayName: req.user.displayName, answers: {}, question: req.body.question, ansparams: {}, openpoll: req.body.openpoll};
+                   displayName: req.user.displayName, answers: {}, question: req.body.question.split(".").join("&#46;"), ansparams: {}, openpoll: req.body.openpoll};
       
       var answers = [];
       for(var i = 0; i < 30; i++) {
         var tempans = req.body["index" + i];
         if(tempans) {
-          if(tempans.length > 120) {
+          if(tempans.length > 300) {
             res.redirect("/createpoll?err=Input%20Fields%20Too%20Long!");
             return 0;
           }
@@ -230,45 +233,20 @@ mongodb.connect(url, function (err, db) {
       }
       var colorIndex = 0;
       for(var i = 0; i < answers.length; i++) {
-        var possibleColors = ['green', 'aqua', 'blue', 'purple', 'red', 'pink', 'orange', 
-                              'yellow', 'grey', 'lime', 'brown', 'black', 'magenta', 'lavender'];
         var tempans = answers[i];
         //console.log("adding ans: " + tempans + "  answers: " + answers.toString());
+        var params = {};
+        var tans = "";
         
         if(tempans) {
-          var tans = "";
-          var isInParam = false;
-          var params = {}
-          var tparam = "";
-
-          // turns tempans into tans and parameters. Example: tempans="Blue is the best color ##color:blue##" Then, tans="Blue is the best color" and params={"color": "blue"}
-          for(var j = 0; j < tempans.length - 1; j++) {
-            if(tempans[j] == "#" && tempans[j + 1] == "#") {
-              if(isInParam) {
-                var splitparam = tparam.split(":");
-                params[splitparam[0]] = splitparam.splice(1).join(":");
-              }
-              if(!isInParam) {
-                j += 1; // skip the other hash
-              }
-              isInParam = !isInParam; // detects ##
-            }
-            else if(!isInParam) {
-              tans += tempans[j];
-              if(j == tempans.length - 2) tans += tempans[j + 1]; // if its the last iteration
-            }
-            else {
-              tparam += tempans[j];
-            }
-          }
+          var tmp = getParamsFromMarkdown(tempans, colorIndex);
+          params = tmp.params;
+          tans = tmp.tans;
           
-          if(!params.color) { // if they didnt set a color, set one for them, in rainbow/ascending order.
-            params.color = possibleColors[colorIndex];
-            colorIndex ++;
-            colorIndex %= possibleColors.length;
-          }
-          
+          colorIndex++;
+          colorIndex %= possibleColors.length;
         }
+          
         
         if(tans != tans || !tans) { tans = "~~~"; } /// not x != x is testing for NaN, because js logic errors
         if(tans) toIns.ansparams[tans] = params;
@@ -277,6 +255,50 @@ mongodb.connect(url, function (err, db) {
       
       pollsDB.insert(toIns, function() {
         res.redirect(toIns.url)
+      });
+    });
+    
+    app.get("/delans/", ensureAuthenticated, function(req, res) {
+      //console.log(req.query.s + " " + req.query.ans);
+      //res.end("<h1>" + req.query.s + "</h1><h1>" + req.query.ans + "</h1>");
+      
+      pollsDB.findOne({slug: req.query.s}, function(err, poll) {
+        if(err) throw err;
+        else if(poll) {
+          var npoll = poll;
+          delete npoll.ansparams[req.query.ans];
+          delete npoll.answers[req.query.ans];
+          
+          pollsDB.update({slug: req.query.s}, {$set: npoll}, {upsert: false, multi: true});
+          res.redirect(npoll.url);
+        } else {
+          res.redirect("/?err=No%20Poll%20Found!");
+        }
+      });
+    });
+    app.get("/addans/", ensureAuthenticated, function(req, res) {
+      //console.log(req.query.s + " " + req.query.ans);
+      //res.end("<h1>" + req.query.s + "</h1><h1>" + req.query.ans + "</h1>");
+      
+      pollsDB.findOne({slug: req.query.s}, function(err, poll) {
+        if(err) throw err;
+        else if(poll) {
+          var npoll = poll;
+          
+          var tmp = getParamsFromMarkdown(req.query.ans, Object.keys(poll.answers).length % possibleColors.length, true);
+          var params = tmp.params;
+          var tans = tmp.tans;
+          
+          npoll.ansparams[req.query.ans] = params;
+          npoll.answers[tans] = 0;
+          
+          pollsDB.update({slug: req.query.s}, {$set: npoll}, {upsert: false, multi: true});
+          res.redirect(npoll.url);
+        } else {
+          console.log("poll obj: " + poll);
+          console.log("slug: " + req.query.s);
+          res.redirect("/?err=No%20Poll%20Found!");
+        }
       });
     });
     
@@ -322,7 +344,9 @@ mongodb.connect(url, function (err, db) {
         if(err) throw err;
         if(!poll) res.redirect("/?err=Poll%20not%20found!");
         else {
-          res.render('viewpoll', { user: req.user, error: req.query.err, poll: poll, authd: (req.user != undefined && req.user != null) });
+          var owner = false;
+          if(req.user && poll.username == req.user.name) owner = true;
+          res.render('viewpoll', { user: req.user, error: req.query.err, poll: poll, authd: (req.user != undefined && req.user != null), owner: owner });
         }
       })
     });
@@ -567,5 +591,39 @@ function makeSlug(min, max) {
     } t += String.fromCharCode(base);
   } 
   return t;
+}
+    
+function getParamsFromMarkdown(tempans, defaultColorIndex=0, htmlEncode=false) {
+  var tans = "";
+  var isInParam = false;
+  var params = {}
+  var tparam = "";
+
+  // turns tempans into tans and parameters. Example: tempans="Blue is the best color ##color:blue##" Then, tans="Blue is the best color" and params={"color": "blue"}
+  for(var j = 0; j < tempans.length - 1; j++) {
+    if(tempans[j] == "#" && tempans[j + 1] == "#") {
+      if(isInParam) {
+        var splitparam = tparam.split(":");
+        params[splitparam[0]] = splitparam.splice(1).join(":");
+      }
+      if(!isInParam) {
+        j += 1; // skip the other hash
+      }
+      isInParam = !isInParam; // detects ##
+    }
+    else if(!isInParam) {
+      tans += tempans[j];
+      if(j == tempans.length - 2) tans += tempans[j + 1]; // if its the last iteration
+    }
+    else {
+      tparam += tempans[j];
+    }
+  }
+  
+  if(!params.color) {
+    params.color = possibleColors[defaultColorIndex]; 
+  }
+  
+  return {params: params, tans: tans.split(".").join("&#46;")};
 }
 // https://pastebin.com/LSWEmQwT holy shiet that a whole lotta code. Just sayin'

@@ -1,20 +1,29 @@
-/* styles */
-/* calle  background: #f9f9f9d by your view template */
 
-/* You might want to try something fancier: */
-/* less: http://lesscss.org/ */
+/* ==================
+   BODY AND BIG STUFF
+   ================== */
 
 * {
   box-sizing: border-box;
 }
-
-
+.faded { /* here is the class d00d just add this to the damn thing when they click the link, thats all i need  the rest i did before, its fine  honestly just pick another topic this was working a while ago*/
+}
+@keyframes fadeout {
+  0%   {opacity: 1  }
+  100% {opacity: 0.5}
+}
 body {
   font-family: 'Lato', helvetica, arial, sans-serif;
   background: #f9f9f9;
-   
 }
-
+.secondarybody {
+}
+.fillcon {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
 .mincon {
   padding: 5%;
   background: #f9f9f9;
@@ -394,6 +403,12 @@ label {
 }
 .poll-ans-row {
   margin-bottom: 10px;
+  margin-right: 0;
+  margin-left: 0;
+  padding: 0;
+}
+.choose-button {
+  padding-right: 0;
 }
 
 
@@ -414,11 +429,11 @@ label {
 .graph-bar-yellow {fill: #f2d948; background: #f2d948;} .graph-bar-yellow:hover {fill: #ffeb7a; background: #ffeb7a;}
 .graph-bar-orange {fill: #cc7e3b; background: #cc7e3b;} .graph-bar-orange:hover {fill: #efad75; background: #efad75;}
 .graph-bar-grey {fill: #b5b5b5; background: #b5b5b5;} .graph-bar-grey:hover {fill: #d8d8d8; background: #d8d8d8;}
-.graph-bar-purple {fill: #6739b2; background: #6739b2;} .graph-bar-purple:hover {fill: #a36bff; background: #a36bff;}
+.graph-bar-purple {fill: #6739b2; background: #6739b2;} .graph-bar-purple:hover {fill: #8759d2; background: #8759d2;}
 .graph-bar-lime {fill: #8fce54; background: #8fce54;} .graph-bar-lime:hover {fill: #b4f477; background: #b4f477;}
 .graph-bar-brown {fill: #af5108; background: #af5108;} .graph-bar-brown:hover {fill: #bf6118; background: #bf6118;}
 .graph-bar-black {fill: #0a0a08; background: #0a0a08;} .graph-bar-black:hover {fill: #1a1a18; background: #1a1a18;}
-.graph-bar-magenta {fill: #a82667; background: #a82667;} .graph-bar-magenta:hover {fill: #b83677; background: #b83677;}
+.graph-bar-magenta {fill: #a1267f; background: #a1267f;} .graph-bar-magenta:hover {fill: #b1368f; background: #b1368f;}
 .graph-bar-lavender {fill: #6f25a8; background: #6f25a8;} .graph-bar-lavender:hover {fill: #7f35b8; background: #7f35b8;}
 #chart {
   padding: 0;
@@ -471,7 +486,7 @@ label {
   margin-top: 10%;
 }
 .pollmd-help-colors-guide-title {
-  margin-top: 15px;
+  margin-top: 55px;
 }
 
 
@@ -523,3 +538,6 @@ label {
   border: 5px solid lightgray;
   padding: 5px;
 }
+/* =====================
+   Animation Stuff
+   ===================== */

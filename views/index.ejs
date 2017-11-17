@@ -41,11 +41,12 @@
             <div class="col-lg-4 col-12">
               <li class="poll-thumb poll-thumb-spaceme rndback">
                 <a href="<%= polls[i].url %>" class="removelinkdefault poll-thumb-question col-12">
-                  <h3 class="poll-thumb-question-text col-12"><%= polls[i].question %></h3>
+                  <h3 class="poll-thumb-question-text col-12"><%= polls[i].question.split("&#46;").join(".") %></h3>
                 </a>
+                
                 <div class="poll-thumb-userbar col-12 row">
                   <div class="poll-thumb-icon">
-                    <a href=""><img src="<%= polls[i].icon64 %>" class="img-responsive img rounded poll-thumb-icon rndbord"/></a>
+                    <a href="/paccount?user=<%= polls[i].username %>"><img src="<%= polls[i].icon64 %>" class="img-responsive img rounded poll-thumb-icon rndbord"/></a>
                   </div>
                   <div class="col-9 row poll-thumb-user">
                     <h6 class="poll-thumb-username col-12">

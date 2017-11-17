@@ -1,39 +1,48 @@
-$(document).ready(function() {
-  
+var baseUrl = "https://poll-voting-app1.glitch.me/";
 
+$(document).ready(function() {
   if(window.location.href.indexOf("err=") != -1) window.history.pushState("", "",window.location.href.split("err=")[0]) ;
   
   clearActiveNavis();
   var url = "https://poll-voting-app.glitch.me/";
   var urlsize = 34;
   if(window.location.href.slice(0, urlsize+17) == url+"login?signup=true") { 
-    console.log('at signup');
+    //console.log('at signup');
     $("#signup-navi").addClass("active"); 
   }
   else if(window.location.href.slice(0, urlsize+7) == url+"account") { 
-    console.log('at account')
+    //console.log('at account')
     $("#account-navi").addClass("active"); 
   }
   else if(window.location.href.slice(0, urlsize+5) == url+"login") { 
-    console.log('at login');
+    //console.log('at login');
     $("#login-navi").addClass("active"); 
   }else if(window.location.href.slice(0, urlsize+4) == url+"help") { 
-    console.log('at help');
+    //console.log('at help');
     $("#help-navi").addClass("active"); 
   }
    else if(window.location.href.slice(0, urlsize+10) == url+"createpoll") { 
-    console.log('at add');
+    //console.log('at add');
     $("#add-navi").addClass("active"); 
   }
   else if(window.location.href.slice(0, urlsize+0) == url) { 
-    console.log('at home');
+    //console.log('at home');
     $("#home-navi").addClass("active"); 
   }
  
   //$(".acc-polls-section").css("min-height", $(".acc-user-section").css("height"));
   //$(".acc-user-section").css("min-height", $(".acc-polls-section").css("height"));
+  //fades the body to black
+  $("a").click(function(){
+    if($(this).attr("href")[0]!="#"){ // prevents non-transfering links from fading
 
+      //$(".secondarybody").addClass("faded"); // just honestly dont even like it that much. works fine as is.
+     // $(".fa").addClass("animated fadeOutUp ");
+
+    }
+  });
   // secret hider / shower
+  
   $("#secretBtn").click(function() {
     $("#userSecret").toggle();
     if($("#secretBtn").text() == "Show Me") $("#secretBtn").text("Hide Me");
@@ -158,7 +167,7 @@ $(document).ready(function() {
   
   //Feckin toggle switch yet again
   $(function() {
-    console.log('meep');
+    //console.log('meep');
     $('.toggle-handle').css("background", "#0275d8");
     $("#toggle-event").change(function() {
       // toggle the active class
@@ -176,4 +185,11 @@ $(document).ready(function() {
       }
     });
   })
+  
+  $('#add-answer-submit').click(function() {
+    console.log("slug holder contains: " + $("slug-hidden-val-holder").val());
+    console.log("navigating to: { " + baseUrl + "/addans?ans=" + $('#add-answer-txt').val().split(" ").join("%20") + "&s=" + $("#slug-hidden-val-holder").val() + " }");
+    window.location = baseUrl + "/addans?ans=" + encodeURIComponent($('#add-answer-txt').val()) + "&s=" + $("#slug-hidden-val-holder").val();
+  });
+  
 });
